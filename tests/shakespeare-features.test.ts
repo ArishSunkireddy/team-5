@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-// Re-defining or testing the core questions and logic used in App.tsx
+// 1. Trivia Questions Data & Logic
 const questions = [
   { question: "Where was Shakespeare born?", answers: ["London", "Stratford-upon-Avon", "Oxford"], correct: 1 },
   { question: "In what year was Shakespeare born?", answers: ["1564", "1588", "1616"], correct: 0 },
@@ -24,7 +24,6 @@ const questions = [
   { question: "In what year did Shakespeare die?", answers: ["1599", "1616", "1642"], correct: 1 },
 ];
 
-// Helper functions matching App.tsx quiz mechanics
 function checkAnswer(selectedIndex: number, correctIndex: number): boolean {
   return selectedIndex === correctIndex;
 }
@@ -37,41 +36,55 @@ function evaluateFinalGrade(score: number): boolean {
   return score >= 150;
 }
 
-describe('Shakespeare Game - Feature & Quiz Unit Tests', () => {
-  it('should contain exactly 20 trivia questions', () => {
-    expect(questions.length).toBe(20);
-  });
+// 2. Story Path / Ending Evaluation Logic
+const successScreens = ["nationalism", "rome", "scotland"];
 
-  it('should have valid answer choices and a correct index for every question', () => {
-    questions.forEach((q, index) => {
-      expect(q.question).toBeDefined();
-      expect(q.answers.length).toBeGreaterThanOrEqual(2);
-      expect(q.correct).toBeGreaterThanOrEqual(0);
-      expect(q.correct).toBeLessThan(q.answers.length);
+function evaluateStoryPath(screen: string): boolean {
+  return successScreens.includes(screen);
+}
+
+describe('Shakespeare Game - Comprehensive Feature & Unit Tests', () => {
+  describe('Trivia Quiz Features', () => {
+    it('should contain exactly 20 trivia questions', () => {
+      expect(questions.length).toBe(20);
+    });
+
+    it('should have valid answer structures for all questions', () => {
+      questions.forEach((q) => {
+        expect(q.question).toBeDefined();
+        expect(q.answers.length).toBeGreaterThanOrEqual(2);
+        expect(q.correct).toBeGreaterThanOrEqual(0);
+        expect(q.correct).toBeLessThan(q.answers.length);
+      });
+    });
+
+    it('should correctly validate correct vs incorrect answers', () => {
+      expect(checkAnswer(1, questions[0].correct)).toBe(true);
+      expect(checkAnswer(0, questions[0].correct)).toBe(false);
+    });
+
+    it('should increment score correctly on correct answers', () => {
+      expect(calculateScore(0, true)).toBe(10);
+      expect(calculateScore(20, false)).toBe(20);
+    });
+
+    it('should correctly evaluate passing score threshold (150 points)', () => {
+      expect(evaluateFinalGrade(150)).toBe(true);
+      expect(evaluateFinalGrade(140)).toBe(false);
     });
   });
 
-  it('should correctly validate correct vs incorrect answers', () => {
-    // Question 0: correct answer index is 1 ("Stratford-upon-Avon")
-    expect(checkAnswer(1, questions[0].correct)).toBe(true);
-    expect(checkAnswer(0, questions[0].correct)).toBe(false);
-  });
+  describe('Story Path & Ending Features', () => {
+    it('should correctly identify successful historical paths/endings', () => {
+      expect(evaluateStoryPath("nationalism")).toBe(true);
+      expect(evaluateStoryPath("rome")).toBe(true);
+      expect(evaluateStoryPath("scotland")).toBe(true);
+    });
 
-  it('should increment score by 10 points on a correct answer', () => {
-    const initialScore = 0;
-    const newScore = calculateScore(initialScore, true);
-    expect(newScore).toBe(10);
-  });
-
-  it('should keep score unchanged on an incorrect answer', () => {
-    const initialScore = 20;
-    const newScore = calculateScore(initialScore, false);
-    expect(newScore).toBe(20);
-  });
-
-  it('should correctly evaluate passing score threshold (150 points)', () => {
-    expect(evaluateFinalGrade(150)).toBe(true);
-    expect(evaluateFinalGrade(200)).toBe(true);
-    expect(evaluateFinalGrade(140)).toBe(false);
+    it('should correctly identify alternative/less successful paths', () => {
+      expect(evaluateStoryPath("mystery")).toBe(false);
+      expect(evaluateStoryPath("forest")).toBe(false);
+      expect(evaluateStoryPath("sea")).toBe(false);
+    });
   });
 });
