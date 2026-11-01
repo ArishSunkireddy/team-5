@@ -1,0 +1,10 @@
+{
+  "description": "Engage with interactive anagram puzzles to learn about Edgar Allan Poe's works, themes, and symbols through fun, educational gameplay.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
