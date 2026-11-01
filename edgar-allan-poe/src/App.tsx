@@ -64,7 +64,7 @@ const rounds: Round[] = [
   },
 ];
 
-const triviaQuestions: TriviaQuestion[] = [
+export const triviaQuestions: TriviaQuestion[] = [
   {
     question: (
       <>
