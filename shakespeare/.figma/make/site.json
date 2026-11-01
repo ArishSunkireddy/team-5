@@ -1,0 +1,10 @@
+{
+  "description": "Engage in an interactive text-game where you guide Shakespeare's play theme choice, exploring historical impact on theatrical success in 1588 England.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
