@@ -1,4 +1,4 @@
-name: Shakespeare Game CI
+name: Team 5 CI
 
 on:
   push:
@@ -17,11 +17,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - name: Install Dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci
 
       - name: Run Test Suite
         run: npm test
+
+      - name: Build Games
+        run: npm run build
