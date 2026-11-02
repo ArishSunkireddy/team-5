@@ -1,33 +1,12 @@
 import { useState } from "react";
+import { questions } from "./questions";
+import { shuffleQuiz } from "./shuffle";
 
 type Screen =
   | "history" | "choice" | "mystery" | "nationalism"
   | "context2" | "choice2" | "rome" | "forest"
   | "context3" | "choice3" | "scotland" | "sea"
   | "farewell" | "quiz" | "complete";
-
-const questions = [
-  { question: "Where was Shakespeare born?", answers: ["London", "Stratford-upon-Avon", "Oxford"], correct: 1 },
-  { question: "In what year was Shakespeare born?", answers: ["1564", "1588", "1616"], correct: 0 },
-  { question: "What was Shakespeare's main profession?", answers: ["Explorer", "Playwright and actor", "Royal painter"], correct: 1 },
-  { question: "Who did Shakespeare marry?", answers: ["Anne Hathaway", "Elizabeth Tudor", "Mary Sidney"], correct: 0 },
-  { question: "Which theatre is closely associated with Shakespeare?", answers: ["The Globe", "The Apollo", "The Royal Albert Hall"], correct: 0 },
-  { question: "Hamlet is the prince of which country?", answers: ["England", "Denmark", "Scotland"], correct: 1 },
-  { question: "Which families feud in Romeo and Juliet?", answers: ["York and Lancaster", "Montague and Capulet", "Tudor and Stuart"], correct: 1 },
-  { question: "Where is Macbeth mainly set?", answers: ["Scotland", "Italy", "France"], correct: 0 },
-  { question: "Who is the villain in Othello?", answers: ["Prospero", "Iago", "Mercutio"], correct: 1 },
-  { question: "How many daughters does King Lear have?", answers: ["Two", "Three", "Five"], correct: 1 },
-  { question: "What date is Caesar warned about?", answers: ["The Ides of March", "May Day", "Twelfth Night"], correct: 0 },
-  { question: "Who is the fairy king in A Midsummer Night's Dream?", answers: ["Oberon", "Puck", "Theseus"], correct: 0 },
-  { question: "Who is the magician in The Tempest?", answers: ["Caliban", "Prospero", "Antonio"], correct: 1 },
-  { question: "Who disguises herself as Cesario in Twelfth Night?", answers: ["Olivia", "Viola", "Portia"], correct: 1 },
-  { question: "Who is the moneylender in The Merchant of Venice?", answers: ["Shylock", "Bassanio", "Lorenzo"], correct: 0 },
-  { question: "How many sonnets are traditionally attributed to Shakespeare?", answers: ["54", "100", "154"], correct: 2 },
-  { question: "What verse form did Shakespeare often use?", answers: ["Blank verse", "Haiku", "Limerick"], correct: 0 },
-  { question: "Which play contains “To be, or not to be”?", answers: ["Hamlet", "Macbeth", "The Tempest"], correct: 0 },
-  { question: "Who are the witty couple in Much Ado About Nothing?", answers: ["Beatrice and Benedick", "Romeo and Juliet", "Viola and Orsino"], correct: 0 },
-  { question: "In what year did Shakespeare die?", answers: ["1599", "1616", "1642"], correct: 1 },
-];
 
 function ShakespearePortrait({ cheering = false }: { cheering?: boolean }) {
   return (
@@ -73,6 +52,8 @@ export default function App() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
+  // A fresh order on every playthrough, so replays can't be won by memorizing positions.
+  const [quizQuestions, setQuizQuestions] = useState(() => shuffleQuiz(questions));
   const resultScreens: Screen[] = ["mystery", "nationalism", "rome", "forest", "scotland", "sea"];
   const result = resultScreens.includes(screen);
   const success = ["nationalism", "rome", "scotland"].includes(screen);
@@ -81,7 +62,7 @@ export default function App() {
     : screen === "context3" || screen === "choice3" ? 3
     : 1;
   const opening = ["history", "choice", "context2", "choice2", "context3", "choice3"].includes(screen);
-  const currentQuestion = questions[questionIndex];
+  const currentQuestion = quizQuestions[questionIndex];
   const resultContent: Partial<Record<Screen, { label: string; title: string; text: string; crowd: string }>> = {
     mystery: {
       label: "OPENING NIGHT",
@@ -129,7 +110,7 @@ export default function App() {
   }
 
   function nextQuestion() {
-    if (questionIndex === questions.length - 1) {
+    if (questionIndex === quizQuestions.length - 1) {
       setScreen("complete");
       return;
     }
@@ -138,6 +119,7 @@ export default function App() {
   }
 
   function restartGame() {
+    setQuizQuestions(shuffleQuiz(questions));
     setQuestionIndex(0);
     setSelectedAnswer(null);
     setScore(0);
@@ -253,10 +235,10 @@ export default function App() {
         <div className="quiz-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-heading">
           <section className="quiz-box">
             <div className="quiz-status">
-              <span>QUESTION {questionIndex + 1} OF {questions.length}</span>
+              <span>QUESTION {questionIndex + 1} OF {quizQuestions.length}</span>
               <strong>{score} POINTS</strong>
             </div>
-            <div className="quiz-progress"><span style={{ width: `${((questionIndex + 1) / questions.length) * 100}%` }} /></div>
+            <div className="quiz-progress"><span style={{ width: `${((questionIndex + 1) / quizQuestions.length) * 100}%` }} /></div>
             <h2 id="quiz-heading">{currentQuestion.question}</h2>
             <div className="quiz-options">
               {currentQuestion.answers.map((answer, index) => {
@@ -277,7 +259,7 @@ export default function App() {
             {selectedAnswer !== null && (
               <div className="quiz-feedback">
                 <p>{selectedAnswer === currentQuestion.correct ? "Correct! +10 points" : `The correct answer is ${currentQuestion.answers[currentQuestion.correct]}.`}</p>
-                <button onClick={nextQuestion}>{questionIndex === questions.length - 1 ? "See my result" : "Next question"}</button>
+                <button onClick={nextQuestion}>{questionIndex === quizQuestions.length - 1 ? "See my result" : "Next question"}</button>
               </div>
             )}
           </section>
