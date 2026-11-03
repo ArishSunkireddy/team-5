@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import App, { poems, quizQuestions } from './App';
+import App, { poems, quizQuestions } from '../matsuo-basho/src/App';
 
 // Game rules (from the design: 20 questions, 10 points each, pass at 150)
 const POINTS_PER_ANSWER = 10;
