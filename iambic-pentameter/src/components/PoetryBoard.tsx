@@ -1,13 +1,15 @@
 // Presentation adapted from the Figma Make export; see docs/iambic-pentameter-skills-check.md.
-import { useState, type DragEvent } from 'react';
+import { useRef, useState, type DragEvent } from 'react';
 import type { PoemChallenge } from '../data/poemChallenges';
+import { isComplete } from '../game/validation';
+import { shuffleTiles } from '../game/tiles';
 import { Progress } from './Presentation';
 export type GameProps = {
   challenge: PoemChallenge;
   roundIndex: number;
   totalRounds: number;
   score: number;
-  slots: Array<string | null>;
+  slots: readonly (string | null)[];
   onDrop: (phraseId: string, slotIndex: number) => void;
   onRemove: (slotIndex: number) => void;
   onCheck: () => void;
@@ -28,7 +30,9 @@ export default function PoetryBoard({
   const [dragOver, setDragOver] = useState<number | null>(null);
   const [draggingPhraseId, setDraggingPhraseId] = useState<string | null>(null);
   const [bankDragOver, setBankDragOver] = useState(false);
-  const unused = challenge.tiles.filter((phrase) => !slots.includes(phrase.id));
+  const slotRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [bankOrder] = useState(() => shuffleTiles(challenge.tiles));
+  const unused = bankOrder.filter((phrase) => !slots.includes(phrase.id));
   const draggingPlacedPhrase = draggingPhraseId !== null && slots.includes(draggingPhraseId);
 
   function beginDrag(event: DragEvent, phraseId: string) {
@@ -96,11 +100,18 @@ export default function PoetryBoard({
                 <button
                   className={`phrase-slot ${phrase ? 'filled' : ''} ${dragOver === index ? 'drag-over' : ''}`}
                   key={index}
+                  ref={element => { slotRefs.current[index] = element; }}
+                  draggable={!!phrase}
+                  onDragStart={event => phrase && beginDrag(event, phrase.id)}
+                  onDragEnd={finishDrag}
                   onDragOver={(event) => {
                     event.preventDefault();
+                    event.dataTransfer.dropEffect = 'move';
                     setDragOver(index);
                   }}
-                  onDragLeave={() => setDragOver(null)}
+                  onDragLeave={event => {
+                    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragOver(null);
+                  }}
                   onDrop={(event) => handleDrop(event, index)}
                   onClick={() => phrase && onRemove(index)}
                   aria-label={phrase ? `${phrase.text}, click to remove` : `Empty position ${index + 1}`}
@@ -109,9 +120,6 @@ export default function PoetryBoard({
                   {phrase ? (
                     <span
                       className="placed-phrase"
-                      draggable
-                      onDragStart={(event) => beginDrag(event, phrase.id)}
-                      onDragEnd={finishDrag}
                     >
                       {phrase.text}
                     </span>
@@ -156,7 +164,10 @@ export default function PoetryBoard({
                 onDragEnd={finishDrag}
                 onClick={() => {
                   const firstEmpty = slots.indexOf(null);
-                  if (firstEmpty >= 0) onDrop(phrase.id, firstEmpty);
+                  if (firstEmpty >= 0) {
+                    onDrop(phrase.id, firstEmpty);
+                    slotRefs.current[firstEmpty]?.focus();
+                  }
                 }}
               >
                 <span>{phrase.text}</span>
@@ -167,8 +178,10 @@ export default function PoetryBoard({
         </div>
 
         <div className="game-actions">
-          <button className="secondary-button" onClick={onReset}>Reset Line</button>
-          <button className="primary-button" onClick={onCheck}>Check Answer <span aria-hidden="true">→</span></button>
+          <button className="secondary-button" onClick={() => {
+            if (slots.some(Boolean) && window.confirm('Clear the phrases from this line?')) onReset();
+          }}>Reset Line</button>
+          <button className="primary-button" disabled={!isComplete(slots, challenge)} onClick={onCheck}>Check Answer <span aria-hidden="true">→</span></button>
         </div>
       </section>
     </main>

@@ -16,12 +16,12 @@ export function QuillMark() {
   );
 }
 
-export function TrailHeader({ onReturn }: { onReturn: () => void }) {
+export function TrailHeader({ onReturn }: { onReturn?: () => void }) {
   return (
     <header className="trail-header">
-      <button className="story-link" onClick={onReturn}>
+      {onReturn ? <button className="story-link" onClick={onReturn}>
         <span aria-hidden="true">‹</span> Return to Introduction
-      </button>
+      </button> : <span />}
       <div className="trail-title">
         <QuillMark />
         <div>

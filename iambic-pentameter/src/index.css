@@ -311,3 +311,21 @@ footer {
   .round-badge { padding: 2px 8px; }
   .score-badge { display: none; }
 }
+
+.primary-button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.progress, .final-score { max-width: 100%; }
+/* Children must not generate enter/leave transitions inside a slot. */
+.phrase-slot > span { pointer-events: none; }
+@media (max-width: 480px) {
+  .trail-header { height: auto; min-height: 82px; gap: 12px; padding: 12px; }
+  .trail-title { letter-spacing: .04em; }
+  .quill-mark { display: none; }
+  .intro-card, .game-card, .results-card { padding-left: 18px; padding-right: 18px; }
+  .result-lead, .explanation, .hints, .quest-note { width: 100%; }
+  .result-actions, .game-actions, .bank-heading { flex-wrap: wrap; gap: 12px; }
+  .result-actions > button, .game-actions > button { width: 100%; padding: 10px; }
+  .beat-row { gap: 3px; }
+  .beat-pair { min-width: 0; }
+  .game-heading { gap: 8px; }
+  .game-heading h1 { font-size: 30px; }
+}

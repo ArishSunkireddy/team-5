@@ -26,5 +26,8 @@ jobs:
       - name: Run Test Suite
         run: npm test
 
+      - name: Typecheck Games
+        run: npx tsc --noEmit -p edgar-allan-poe && npx tsc --noEmit -p shakespeare && npm run typecheck -w iambic-pentameter
+
       - name: Build Games
         run: npm run build

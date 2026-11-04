@@ -14,8 +14,25 @@ export type PoemChallenge = {
   trailName: string;
   tiles: PhraseTile[];
   correctAnswer: string[];
+  acceptedAnswers: string[][];
   feet: IambicFoot[];
   hint: string;
+};
+
+// Reviewed alternatives use zero-based phrase positions. Keep prepositional phrases
+// and subject/verb/object groups intact; these are not arbitrary permutations.
+const alternativeOrders: Record<number, number[][]> = {
+  1: [[4, 0, 1, 2, 3], [0, 1, 4, 2, 3], [2, 3, 0, 1, 4], [4, 2, 3, 0, 1]],
+  2: [[3, 4, 0, 1, 2]],
+  3: [[3, 4, 0, 1, 2]],
+  4: [[4, 1, 2, 3, 0], [1, 2, 3, 0, 4], [1, 2, 3, 4, 0], [0, 4, 1, 2, 3], [4, 0, 1, 2, 3]],
+  5: [[3, 4, 0, 1, 2], [1, 2, 0, 3, 4], [0, 3, 4, 1, 2]],
+  // The coordinated verbs require their existing order and complements.
+  6: [],
+  7: [[1, 2, 3, 4, 0], [3, 4, 1, 2, 0], [0, 3, 4, 1, 2], [3, 4, 0, 1, 2], [1, 2, 0, 3, 4]],
+  8: [[3, 4, 0, 1, 2], [0, 3, 4, 1, 2]],
+  9: [[4, 0, 1, 2, 3], [2, 3, 0, 1, 4], [0, 1, 4, 2, 3]],
+  10: [],
 };
 
 const makeChallenge = (
@@ -36,6 +53,7 @@ const makeChallenge = (
     trailName,
     tiles: shuffledOrder.map((index) => orderedTiles[index]),
     correctAnswer: orderedTiles.map((tile) => tile.id),
+    acceptedAnswers: [[0, 1, 2, 3, 4], ...alternativeOrders[id]].map(order => order.map(index => orderedTiles[index].id)),
     feet,
     hint,
   };

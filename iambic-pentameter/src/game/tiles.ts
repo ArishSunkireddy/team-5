@@ -30,3 +30,13 @@ export function removeTile(slots: Slots, index: number, challenge: PoemChallenge
   if (!validBoard(slots, challenge) || !validIndex(index, slots) || slots[index] === null) return slots;
   return slots.map((id, position) => position === index ? null : id);
 }
+
+/** Fisher–Yates; callers retain this order while a board is being edited. */
+export function shuffleTiles<T>(tiles: readonly T[], random = Math.random): T[] {
+  const shuffled = [...tiles];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}

@@ -5,6 +5,7 @@ import { Progress, CornerFlourish } from './Presentation';
 type RoundFeedbackProps = {
   challenge: PoemChallenge;
   result: RoundResult;
+  slots: readonly (string | null)[];
   roundIndex: number;
   totalRounds: number;
   score: number;
@@ -15,6 +16,7 @@ type RoundFeedbackProps = {
 export default function RoundFeedback({
   challenge,
   result,
+  slots,
   roundIndex,
   totalRounds,
   score,
@@ -33,23 +35,26 @@ export default function RoundFeedback({
         <h1>{success ? 'A line well measured!' : 'Nearly there, poet.'}</h1>
         <p className="result-lead">
           {success
-            ? 'You built the line in the correct order and kept all five iambs marching together.'
-            : 'The phrases do not yet form the intended line. Study the scansion below, then try again or continue.'}
+            ? 'Your line matches one of the reviewed meaningful arrangements of these five iambic phrases.'
+            : 'This order does not match a reviewed arrangement. Keep related phrases together, then try again or continue.'}
         </p>
 
-        <div className="completed-line" aria-label="Correct line with stressed syllables emphasized">
-          “{challenge.feet.map((foot, index) => (
-            <span className="scanned-foot" key={`${foot.unstressed}-${foot.stressed}`}>
-              <span>{foot.unstressed}</span> <b>{foot.stressed}</b>{index < challenge.feet.length - 1 && <i> · </i>}
-            </span>
-          ))}”
-        </div>
+        {success && <div className="completed-line" aria-label="Your accepted line with stressed syllables emphasized">
+          “{slots.map((id, index) => {
+            const foot = challenge.feet[challenge.correctAnswer.indexOf(id!)];
+            return (
+              <span className="scanned-foot" key={index}>
+                <span>{foot.unstressed}</span> <b>{foot.stressed}</b>{index < challenge.feet.length - 1 && <i> · </i>}
+              </span>
+            );
+          })}”
+        </div>}
         <div className="explanation">
-          <h2>{success ? 'Why it works' : 'Follow the rhythm'}</h2>
-          <p>
+          <h2>{success ? 'Why it works' : 'Try this clue'}</h2>
+          {success && <p>
             Lowercase syllables are <strong>unstressed</strong>; bold capitals are <strong>stressed</strong>.
-            Read each foot as da-<b>DUM</b>: {challenge.feet.map((foot) => `${foot.unstressed}-${foot.stressed}`).join(' · ')}.
-          </p>
+            Read each foot as da-<b>DUM</b>, five times.
+          </p>}
           {!success && <p className="round-hint"><strong>Hint:</strong> {challenge.hint}</p>}
         </div>
 

@@ -12,7 +12,7 @@ export default function FinalResults({
   onPlayAgain: () => void;
   onReturn: () => void;
 }) {
-  const strongFinish = isStrongFinish(score);
+  const strongFinish = isStrongFinish(score, totalRounds);
   return (
     <main className="screen results-screen">
       <Progress active={3} />
@@ -22,7 +22,7 @@ export default function FinalResults({
         <div className="eyebrow">SIDE QUEST COMPLETE</div>
         <h1>{strongFinish ? 'Master of the measured line' : 'The poet’s trail continues'}</h1>
         <p className="result-lead">
-          You completed all ten poetry challenges and scored <strong>{score} out of {totalRounds}</strong>.
+          You completed all {totalRounds} poetry challenges and scored <strong>{score} out of {totalRounds}</strong>.
         </p>
         <div className="final-score">
           <span>{score}</span>
@@ -33,7 +33,7 @@ export default function FinalResults({
           <h2>{strongFinish ? 'A steady poetic stride' : 'Keep listening for the beat'}</h2>
           <p>
             {strongFinish
-              ? 'You consistently recognized the unstressed–stressed pulse of iambic pentameter.'
+              ? 'You built meaningful lines from phrases that model the unstressed–stressed pulse of iambic pentameter.'
               : 'Read verse aloud and tap out five da-DUM pairs. Each attempt makes the meter easier to hear.'}
           </p>
         </div>

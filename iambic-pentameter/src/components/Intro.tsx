@@ -1,12 +1,12 @@
 // Presentation adapted from the Figma Make export; see docs/iambic-pentameter-skills-check.md.
 import { Progress, CornerFlourish } from './Presentation';
-export default function Intro({ onStart }: { onStart: () => void }) {
+export default function Intro({ onStart, totalRounds }: { onStart: () => void; totalRounds: number }) {
   return (
     <main className="screen intro-screen">
       <Progress active={1} />
       <section className="parchment intro-card">
         <CornerFlourish />
-        <div className="eyebrow">TEN-ROUND SIDE QUEST</div>
+        <div className="eyebrow">{totalRounds}-ROUND SIDE QUEST</div>
         <h1>Poetry Builder</h1>
         <p className="subtitle">Iambic Pentameter</p>
         <div className="ornament"><span>◆</span></div>
@@ -40,7 +40,7 @@ export default function Intro({ onStart }: { onStart: () => void }) {
 
         <div className="quest-note">
           <span>YOUR QUEST</span>
-          Build ten lines of verse by arranging each set of five phrase tiles in the correct order.
+          Build {totalRounds} lines of verse by arranging each set of five phrase tiles into a meaningful sentence. Answers are checked against reviewed arrangements, not automatic meter analysis.
         </div>
 
         <button className="primary-button" onClick={onStart}>

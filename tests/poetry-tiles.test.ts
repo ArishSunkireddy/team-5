@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { poemChallenges } from '../iambic-pentameter/src/data/poemChallenges';
-import { emptySlots, placeTile, removeTile } from '../iambic-pentameter/src/game/tiles';
+import { emptySlots, placeTile, removeTile, shuffleTiles } from '../iambic-pentameter/src/game/tiles';
 const challenge = poemChallenges[0];
 const [a, b] = challenge.correctAnswer;
 
@@ -48,4 +48,12 @@ describe('tile operations', () => {
     first[0] = a;
     expect(emptySlots(challenge)).toEqual([null, null, null, null, null]);
   });
+});
+
+it('shuffles without mutating or losing tiles', () => {
+  const original = Object.freeze([...challenge.tiles]);
+  const shuffled = shuffleTiles(original, () => 0);
+  expect(shuffled).not.toEqual(original);
+  expect(new Set(shuffled)).toEqual(new Set(original));
+  expect(original).toEqual(challenge.tiles);
 });
