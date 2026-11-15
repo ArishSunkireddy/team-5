@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { questions } from "./questions";
 import { shuffleQuiz } from "./shuffle";
-import PoeGame from "./EdgarAllanPoeApp.review";
-import BashoGame from "./MatsuoBashoApp.review";
+import PoeGame from "../../edgar-allan-poe/src/App";
+import BashoGame from "../../matsuo-basho/src/App";
 
 type Screen =
   /* ==========================================
