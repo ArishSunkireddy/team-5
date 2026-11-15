@@ -4,6 +4,8 @@ import { TriviaQuestion } from "./questions";
 export class TriviaView {
     private stage: Konva.Stage;
     private layer: Konva.Layer;
+    private quizGroup: Konva.Group;
+    private endGroup: Konva.Group;
     private progressText: Konva.Text;
     private scoreText: Konva.Text;
     private promptText: Konva.Text;
@@ -30,6 +32,9 @@ export class TriviaView {
             fill: "#18181b",
         });
         this.layer.add(bg);
+        this.quizGroup = new Konva.Group({ visible: true });
+        this.endGroup = new Konva.Group({ visible: false });
+        this.layer.add(this.quizGroup, this.endGroup);
 
         // Ex: Question: x / 20 in top left corner
         this.progressText = new Konva.Text( {
@@ -39,7 +44,7 @@ export class TriviaView {
             fontSize: 15,
             fill: "#a1a1aa",
         });
-        this.layer.add(this.progressText);
+        this.quizGroup.add(this.progressText);
 
         // Displays scores in top right corner
         this.scoreText = new Konva.Text( {
@@ -49,7 +54,7 @@ export class TriviaView {
             fontSize: 15,
             fill: "#a1a1aa",
         });
-        this.layer.add(this.scoreText);
+        this.quizGroup.add(this.scoreText);
 
         // For question
         this.promptText = new Konva.Text( {
@@ -60,7 +65,7 @@ export class TriviaView {
             fill: "#ffffff",
             lineHeight: 1.5,
         });
-        this.layer.add(this.promptText);
+        this.quizGroup.add(this.promptText);
 
         for (let idx = 0; idx < 4; idx++) {
             const group = new Konva.Group({x:60, y:230 + idx * 75});
@@ -98,13 +103,15 @@ export class TriviaView {
             this.optionGroups.push(group);
             this.optionBoxes.push(box);
             this.optionLabels.push(label);
-            this.layer.add(group);
+            this.quizGroup.add(group);
         }
         this.layer.draw();
     }
 
     // Change to next question, progress, and score
     updateQuestion(question: TriviaQuestion, num: number, total: number, score: number): void {
+        this.endGroup.visible(false);
+        this.quizGroup.visible(true);
         this.currentOptions = question.options;
         this.progressText.text(`Question ${num} / ${total}`);
         this.scoreText.text(`Score: ${score}`);
@@ -145,7 +152,9 @@ export class TriviaView {
     }
 
     public showEnd(score: number, message: string, buttonLabel: string, onAction: () => void): void {
-        this.layer.destroy();
+        this.quizGroup.visible(false);
+        this.endGroup.destroyChildren();
+        this.endGroup.visible(true);
         const width = this.stage.width();
         const height = this.stage.height();
 
@@ -188,12 +197,12 @@ export class TriviaView {
             text: buttonLabel,
             fontSize: 18,
             fill: "#ffffff",
-            aligh: "center",
+            align: "center",
             verticalAlign: "middle",
         });
 
         buttonGroup.add(buttonBackground, buttonText);
-        
+
         buttonGroup.on("mouseenter", () => {
             this.stage.container().style.cursor = "pointer";
             buttonBackground.fill("#2563eb");
@@ -207,6 +216,7 @@ export class TriviaView {
             onAction();
         });
 
-        this.layer.add(scoreText, bodyText, buttonGroup);
+        this.endGroup.add(scoreText, bodyText, buttonGroup);
+        this.layer.draw()
     }
 }
