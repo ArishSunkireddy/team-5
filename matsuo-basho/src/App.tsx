@@ -214,7 +214,7 @@ function MarkIcon({ type }: { type: "check" | "lock" }) {
   );
 }
 
-export default function App() {
+export default function App({
   onComplete,
   }: {
   onComplete: () => void;
