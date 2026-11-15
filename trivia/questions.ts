@@ -4,6 +4,14 @@ export interface TriviaQuestion {
     answer: string;
 }
 
+export interface TriviaEnding {
+    passingScore: number;
+    passMessage: string;
+    failMessage: string;
+    passButtonLabel: string;
+    failButtonLabel: string;
+}
+
 export type AuthorID = "poe" | "basho" | "shakespeare";
 
 export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
@@ -315,4 +323,28 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
             answer: "1616",
         },
     ]
+};
+
+export const TriviaEndings: Record<AuthorID, TriviaEnding> = {
+    poe: {
+        passingScore: 150,
+        passMessage: "Congrats! Poe's collection awaits.",
+        failMessage: "Nevermore! Come back another time to study Edgar Allan Poe.",
+        passButtonLabel: "Begin a new journey",
+        failButtonLabel: "Try the questions again",
+    },
+    basho: {
+        passingScore: 150,
+        passMessage: "You carried Bashō's lessons through the turning of time. Your knowledge is worthy of the poet's path.",
+        failMessage: "The road to understanding is walked more than once. Return to Bashō's life and poems, then try the trial again.",
+        passButtonLabel: "Begin a new journey",
+        failButtonLabel: "Try the questions again",
+    },
+    shakespeare: {
+        passingScore: 150,
+        passMessage: "Your knowledge of the Bard has carried you safely home.",
+        failMessage: "Shakespeare's stories will be waiting for your return.",
+        passButtonLabel: "Begin a new journey",
+        failButtonLabel: "Try the questions again",
+    }
 };
