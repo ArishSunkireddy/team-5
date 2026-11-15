@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { createElement } from 'react';
-import App from '../App';
+import App from '../shakespeare/src/App';
 
 describe('The Playwright’s Gambit - Prologue & Navigation Flow', () => {
   
