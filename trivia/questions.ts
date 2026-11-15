@@ -19,7 +19,7 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
             answer: "Boston",
         },
         {
-            question: "Which Poe story introduced the brillian detective C. Auguste Dupin?",
+            question: "Which Poe story introduced the brilliant detective C. Auguste Dupin?",
             options: ["The Gold-Bug", "The Murders in the Rue Morgue", "The Black Cat", "The Purloined Letter"],
             answer: "The Murders in the Rue Morgue",
         },
@@ -104,7 +104,7 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
             answer: "Southern Literary Messenger",
         },
         {
-            question: "What is the name of the prince in `The Masque of the Red Death'?",
+            question: "What is the name of the prince in 'The Masque of the Red Death'?",
             options: ["Prince Prospero", "Prince Fortunato", "Prince Usher", "Prince Pluto"],
             answer: "Prince Prospero",
         },
