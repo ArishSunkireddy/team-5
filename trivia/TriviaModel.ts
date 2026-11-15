@@ -3,7 +3,7 @@ import { individualTrivia, AuthorID, TriviaQuestion } from "./questions";
 export class TriviaModel {
     private questions: TriviaQuestion[];
     private currentIdx = 0;
-    public score = 0;
+    private score = 0;
 
     // Initializes trivia questions depending on author
     constructor(author: AuthorID) {
