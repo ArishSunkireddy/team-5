@@ -1,19 +1,22 @@
 import { useState } from "react";
 import { questions } from "./questions";
 import { shuffleQuiz } from "./shuffle";
+import PoeGame from "./EdgarAllanPoeApp.review";
+import BashoGame from "./MatsuoBashoApp.review";
 
 type Screen =
   /* ==========================================
      START NEW: Added prologue & return screens
      ========================================== */
-  | "worksheet" | "timetravel" | "meeting" | "home" | "returnTravel"
+  | "worksheet" | "timetravel" | "meeting" | "home"
   /* ==========================================
      STOP NEW: Added prologue & return screens
      ========================================== */
   | "history" | "choice" | "mystery" | "nationalism"
   | "context2" | "choice2" | "rome" | "forest"
   | "context3" | "choice3" | "scotland" | "sea"
-  | "farewell" | "quiz" | "complete";
+  | "farewell" | "returnTravel" | "quiz" | "complete";
+  | "farewell" | "returnTravel" | "quiz" | "poe" | "basho" | "complete";
 
 function ShakespearePortrait({ cheering = false }: { cheering?: boolean }) {
   return (
@@ -134,7 +137,7 @@ export default function App() {
       /* ==========================================
          START NEW LINE: Route to returnTravel instead of complete
          ========================================== */
-      setScreen("returnTravel");
+      setScreen("poe");
       /* ==========================================
          STOP NEW LINE: Route to returnTravel instead of complete
          ========================================== */
@@ -157,6 +160,14 @@ export default function App() {
      STOP NEW LINE: Reset game back to worksheet
      ========================================== */
   }
+
+  if (screen === "poe") {
+    return <PoeGame onComplete={() => setScreen("basho")} />;
+  }
+
+  if (screen === "basho") {
+    return <BashoGame onComplete={() => setScreen("returnTravel")} />;
+  } 
 
   return (
     <main className={`game ${result ? "show-result" : ""} ${screen === "farewell" || screen === "quiz" || screen === "complete" ? "wormhole-scene" : ""} ${prologue ? "prologue-scene" : ""}`}>
