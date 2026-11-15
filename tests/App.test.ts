@@ -17,11 +17,11 @@ const authorMock = (name: string, button: string) => ({
 });
 
 vi.mock(
-  '../../edgar-allan-poe/src/App',
+  '../edgar-allan-poe/src/App',
   () => authorMock('Edgar Allan Poe', 'Continue to Matsuo Basho'),
 );
 vi.mock(
-  '../../matsuo-basho/src/App',
+  '../matsuo-basho/src/App',
   () => authorMock('Matsuo Basho', 'Return to the present'),
 );
 
