@@ -215,6 +215,10 @@ function MarkIcon({ type }: { type: "check" | "lock" }) {
 }
 
 export default function App() {
+  onComplete,
+  }: {
+  onComplete: () => void;
+  }) {
   const [gameState, setGameState] = useState<GameState>("briefing");
   const [lives, setLives] = useState(3);
   const [poemIndex, setPoemIndex] = useState(0);
@@ -675,8 +679,8 @@ export default function App() {
                   ? "You carried Bashō's lessons through the turning of time. Your knowledge is worthy of the poet's path."
                   : "The road to understanding is walked more than once. Return to Bashō's life and poems, then try the trial again."}
               </p>
-              <button className="primary-button" onClick={quizScore >= 150 ? resetGame : restartQuiz}>
-                {quizScore >= 150 ? "Begin a new journey" : "Try the questions again"}
+              <button className="primary-button" onClick={quizScore >= 150 ? onComplete : restartQuiz}>
+                {quizScore >= 150 ? "Return to the present" : "Try the questions again"}
                 <span>→</span>
               </button>
             </section>
