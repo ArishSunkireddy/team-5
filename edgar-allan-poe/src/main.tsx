@@ -5,6 +5,8 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <App onComplete={() => {
+      console.log('App workflow completed');
+    }} />    
   </React.StrictMode>,
 )
