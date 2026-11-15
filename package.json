@@ -6,7 +6,8 @@
   "workspaces": [
     "edgar-allan-poe",
     "shakespeare",
-    "iambic-pentameter"
+    "iambic-pentameter",
+    "trivia"
   ],
   "engines": {
     "node": "^22.12.0 || >=24.0.0"
@@ -16,12 +17,14 @@
     "dev:shakespeare": "npm run dev -w shakespeare",
     "build": "npm run build --workspaces",
     "test": "vitest run",
-    "dev:poetry": "npm run dev -w iambic-pentameter"
+    "dev:poetry": "npm run dev -w iambic-pentameter",
+    "dev:trivia": "vite"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.0",
     "react": "^19.0.0",
-    "vite": "^8.0.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
     "vitest": "^5.0.5"
   },
   "dependencies": {
