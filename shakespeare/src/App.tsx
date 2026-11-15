@@ -15,7 +15,6 @@ type Screen =
   | "history" | "choice" | "mystery" | "nationalism"
   | "context2" | "choice2" | "rome" | "forest"
   | "context3" | "choice3" | "scotland" | "sea"
-  | "farewell" | "returnTravel" | "quiz" | "complete";
   | "farewell" | "returnTravel" | "quiz" | "poe" | "basho" | "complete";
 
 function ShakespearePortrait({ cheering = false }: { cheering?: boolean }) {
