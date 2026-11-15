@@ -64,6 +64,220 @@ button:focus-visible {
   text-transform: uppercase;
 }
 
+/* START NEW BLOCK: Home / Main Menu Scene */
+.home-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 46px 22px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(250, 204, 117, .33), transparent 29%),
+    var(--cream);
+}
+
+.home-scene::before,
+.home-scene::after {
+  content: "S";
+  position: absolute;
+  color: rgba(123, 45, 38, .055);
+  font-size: min(74vw, 850px);
+  font-style: italic;
+  line-height: 1;
+}
+
+.home-scene::after {
+  content: "";
+  inset: 24px;
+  border: 1px solid rgba(123, 45, 38, .28);
+}
+
+.home-scene > * {
+  position: relative;
+  z-index: 2;
+}
+
+.home-scene h1 {
+  font-size: clamp(58px, 9vw, 126px);
+}
+
+.home-scene h1 em {
+  color: #c96a1b;
+  font-weight: 400;
+}
+
+.home-scene > p:not(.home-kicker) {
+  max-width: 600px;
+  margin: 22px auto 0;
+  font-size: clamp(15px, 1.5vw, 19px);
+  line-height: 1.65;
+}
+
+.home-rule {
+  width: min(480px, 72vw);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 30px 0 0;
+  color: var(--red);
+  font-size: 10px;
+  letter-spacing: .16em;
+}
+
+.home-rule i {
+  flex: 1;
+  height: 1px;
+  background: var(--red);
+}
+
+.home-button {
+  min-width: 190px;
+}
+/* STOP NEW BLOCK: Home / Main Menu Scene */
+
+/* START NEW BLOCK: Classroom & Worksheet Scene */
+.worksheet-scene {
+  display: grid;
+  grid-template-columns: minmax(300px, .85fr) minmax(440px, 1.15fr);
+  align-items: center;
+  gap: clamp(40px, 8vw, 120px);
+  padding: clamp(36px, 6vw, 88px);
+}
+
+.classroom-copy > p:not(.scene-label) {
+  max-width: 480px;
+  margin: 32px 0 0;
+  font-size: clamp(17px, 1.6vw, 21px);
+  line-height: 1.7;
+}
+
+.desk {
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  min-height: 560px;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.08), transparent 45%),
+    repeating-linear-gradient(90deg, #6f3421 0 4px, #7d4029 4px 80px, #65301f 81px 84px);
+  box-shadow: inset 18px 0 45px rgba(49, 20, 12, .25);
+}
+
+.worksheet-paper {
+  position: relative;
+  width: min(76%, 540px);
+  padding: clamp(28px, 4vw, 52px);
+  transform: rotate(-2.2deg);
+  background: #fffaf0;
+  box-shadow: 0 22px 40px rgba(35, 13, 8, .35);
+}
+
+.paper-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 32px;
+  padding-bottom: 18px;
+  border-bottom: 3px double var(--red);
+  color: var(--red);
+}
+
+.paper-heading span {
+  font-size: 10px;
+  letter-spacing: .18em;
+}
+
+.paper-heading strong {
+  font-size: clamp(20px, 2.3vw, 30px);
+}
+
+.worksheet-row {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  min-height: 58px;
+  border-bottom: 1px solid #cbbfa5;
+  align-items: center;
+}
+
+.worksheet-row > *:last-child {
+  padding-left: 20px;
+  border-left: 1px solid #cbbfa5;
+}
+
+.worksheet-labels {
+  min-height: 34px;
+  color: var(--red);
+  font-size: 10px;
+  letter-spacing: .15em;
+}
+
+.active-row {
+  color: var(--red);
+  font-style: italic;
+}
+
+.pencil-line {
+  position: absolute;
+  width: 42%;
+  height: 8px;
+  right: -10%;
+  bottom: 13%;
+  border-radius: 10px;
+  transform: rotate(-28deg);
+  background: #d39b32;
+  box-shadow: inset 18px 0 #c66e42, -7px 0 #4b3430;
+}
+/* STOP NEW BLOCK: Classroom & Worksheet Scene */
+
+/* START NEW BLOCK: Classroom Clock Widget */
+.clock {
+  position: absolute;
+  z-index: 2;
+  width: 108px;
+  height: 108px;
+  top: 28px;
+  right: 28px;
+  border: 8px solid #34251f;
+  border-radius: 50%;
+  background: #f8eed4;
+  box-shadow: 0 12px 22px rgba(30, 10, 5, .35);
+}
+
+.clock::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(#3f3028 0 2deg, transparent 2deg 30deg);
+  mask: radial-gradient(circle, transparent 0 82%, #000 83%);
+}
+
+.clock i {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  left: 42px;
+  top: 42px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.clock-hand {
+  position: absolute;
+  z-index: 2;
+  left: 45px;
+  bottom: 46px;
+  width: 3px;
+  transform-origin: 50% 100%;
+  border-radius: 4px;
+  background: var(--red);
+}
+
+.clock-hour { height: 27px; transform: rotate(55deg); }
+.clock-minute { height: 35px; transform: rotate(175deg); animation: clock-twitch .45s ease-in-out infinite alternate; }
+/* STOP NEW BLOCK: Classroom Clock Widget */
+
 .portrait {
   position: absolute;
   z-index: 0;
@@ -188,6 +402,103 @@ button:focus-visible {
   color: var(--red);
 }
 
+/* START NEW BLOCK: Travel Scene & Time Rings */
+.travel-scene {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 40px 24px;
+  background: #3c1714;
+  color: var(--cream);
+}
+
+.travel-copy {
+  position: relative;
+  z-index: 4;
+  width: min(650px, 90vw);
+  text-align: center;
+}
+
+.travel-copy .scene-label,
+.travel-copy h1 {
+  color: var(--gold);
+}
+
+.travel-copy p:not(.scene-label) {
+  margin: 30px auto 0;
+  max-width: 590px;
+  font-size: clamp(17px, 2vw, 22px);
+  line-height: 1.65;
+}
+
+.light-button {
+  border-color: var(--gold);
+}
+
+.time-rings,
+.time-rings span {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.time-rings {
+  width: min(90vw, 900px);
+  aspect-ratio: 1;
+  border: 10px solid #d16929;
+  box-shadow: 0 0 70px #d16929, inset 0 0 70px #d16929;
+  animation: travel-spin 8s linear infinite;
+}
+
+.time-rings span {
+  inset: calc(var(--ring, 1) * 8%);
+  border: calc(12px - var(--ring, 1) * 2px) dashed var(--gold);
+  opacity: calc(1 - var(--ring, 1) * .14);
+}
+
+.time-rings span:nth-child(1) { --ring: 1; }
+.time-rings span:nth-child(2) { --ring: 2; border-color: #e47732; }
+.time-rings span:nth-child(3) { --ring: 3; }
+.time-rings span:nth-child(4) { --ring: 4; border-color: var(--cream); }
+/* STOP NEW BLOCK: Travel Scene & Time Rings */
+
+/* START NEW BLOCK: Meeting & Arrival Scenes */
+.meeting-scene {
+  overflow: hidden;
+  padding: clamp(36px, 6vw, 86px);
+}
+
+.meeting-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0 48% 0 0;
+  background: linear-gradient(90deg, rgba(195, 105, 50, .15), transparent);
+}
+
+.arrival-copy {
+  position: relative;
+  z-index: 3;
+  width: min(650px, 58vw);
+}
+
+.arrival-narration {
+  max-width: 610px;
+  margin: 0 0 clamp(46px, 8vh, 82px);
+  padding-left: 20px;
+  border-left: 2px solid var(--gold);
+  font-size: clamp(15px, 1.35vw, 18px);
+  line-height: 1.65;
+}
+
+.meeting-dialogue {
+  margin-top: 28px;
+}
+
+.meeting-scene .portrait {
+  z-index: 1;
+  opacity: .68;
+}
+/* STOP NEW BLOCK: Meeting & Arrival Scenes */
+
 .history-layer {
   position: fixed;
   z-index: 10;
@@ -274,6 +585,17 @@ button:focus-visible {
 .farewell-copy .dialogue {
   margin-top: 32px;
 }
+
+/* START NEW BLOCK: Completed Paper Card */
+.completed-paper {
+  width: 100%;
+  margin: 0 auto 28px;
+  padding: 26px;
+  transform: rotate(-1deg);
+  text-align: left;
+  box-shadow: 0 10px 28px rgba(63, 25, 18, .18);
+}
+/* STOP NEW BLOCK: Completed Paper Card */
 
 .wormhole-scene .portrait {
   right: -10vw;
@@ -485,6 +807,16 @@ button:focus-visible {
   to { transform: translateY(-8px) rotate(1deg); }
 }
 
+/* START NEW BLOCK: New Animation Keyframes */
+@keyframes clock-twitch {
+  to { transform: rotate(220deg); }
+}
+
+@keyframes travel-spin {
+  to { transform: rotate(360deg) scale(1.08); }
+}
+/* STOP NEW BLOCK: New Animation Keyframes */
+
 @media (max-width: 700px) {
   .game {
     padding: 24px 18px;
@@ -493,6 +825,86 @@ button:focus-visible {
   .game-title span {
     max-width: 190px;
   }
+  
+  /* START NEW BLOCK: Media Query Additions */
+  .worksheet-scene {
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 30px;
+    padding: 32px 18px;
+  }
+
+  .classroom-copy {
+    padding-right: 60px;
+  }
+
+  .classroom-copy > p:not(.scene-label) {
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+
+  .desk {
+    min-height: 420px;
+    margin: 0 -18px -32px;
+  }
+
+  .clock {
+    width: 84px;
+    height: 84px;
+    top: -76px;
+    right: 18px;
+  }
+
+  .clock-hand {
+    left: 33px;
+    bottom: 34px;
+  }
+
+  .clock i {
+    left: 30px;
+    top: 30px;
+  }
+
+  .clock-hour { height: 22px; }
+  .clock-minute { height: 29px; }
+
+  .worksheet-paper {
+    width: 82%;
+    padding: 25px 22px;
+  }
+
+  .paper-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .meeting-scene {
+    padding: 30px 18px;
+  }
+
+  .arrival-copy {
+    width: 100%;
+  }
+
+  .arrival-narration {
+    max-width: 88%;
+    margin-bottom: 46px;
+  }
+
+  .meeting-scene .portrait {
+    right: -34vw;
+    opacity: .22;
+  }
+
+  .meeting-dialogue {
+    max-width: 75%;
+  }
+
+  .home-scene::after {
+    inset: 12px;
+  }
+  /* STOP NEW BLOCK: Media Query Additions */
 
   .portrait {
     height: 72vh;
