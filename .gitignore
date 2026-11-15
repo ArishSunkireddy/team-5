@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+.vite/
+*.tsbuildinfo
+*.log
+.env*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# One lockfile for the whole repo: the root package-lock.json.
+# Figma Make exports bring their own lockfiles, so keep those out.
+pnpm-lock.yaml
+*/package-lock.json

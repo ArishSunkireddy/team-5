@@ -10,7 +10,7 @@ describe('Shakespeare Module - Frontend & React Component Tests', () => {
 
   it('should successfully locate the Shakespeare app source files', async () => {
     // Verifies that the main entry points exist and can be referenced
-    const appModule = await import('../shakespeare/src/App');
+    const appModule = await import('../shakespeare/src/App.tsx');
     expect(appModule).toBeDefined();
     expect(appModule.default).toBeInstanceOf(Function);
   });
