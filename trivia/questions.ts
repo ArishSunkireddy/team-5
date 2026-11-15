@@ -121,17 +121,17 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
     basho: [
         {
             question: "During which period of Japanese history did Matsuo Bashō live?",
-            options: ["Edo period", "Heian period", "Meiji period", "Kamakura period"],
+            options: ["Heian period", "Edo period", "Meiji period", "Kamakura period"],
             answer: "Edo period",
         },
         {
             question: "What poetic form is Bashō most closely associated with?",
-            options: ["Haiku", "Sonnet", "Epic", "Ode"],
+            options: ["Sonnet", "Epic", "Haiku", "Ode"],
             answer: "Haiku",
         },
         {
             question: "What was Bashō's birth name?",
-            options: ["Matsuo Kinsaku", "Tokugawa Ieyasu", "Yosa Buson", "Kobayashi Issa"],
+            options: ["Tokugawa Ieyasu", "Yosa Buson", "Kobayashi Issa", "Matsuo Kinsaku"],
             answer: "Matsuo Kinsaku",
         },
         {
@@ -141,27 +141,27 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
         },
         {
             question: "The name 'Bashō' refers to which plant?",
-            options: ["Banana plant", "Cherry tree", "Bamboo", "Plum tree"],
+            options: ["Cherry tree", "Bamboo", "Banana plant", "Plum tree"],
             answer: "Banana plant",
         },
         {
             question: "Which famous travel diary was written by Bashō?",
-            options: ["The Narrow Road to the Deep North", "The Tale of Genji", "The Pillow Book", "Essays in Idleness"],
+            options: ["The Tale of Genji", "The Narrow Road to the Deep North", "The Pillow Book", "Essays in Idleness"],
             answer: "The Narrow Road to the Deep North",
         },
         {
             question: "What creature jumps into the old pond in Bashō's best-known poem?",
-            options: ["A frog", "A crane", "A carp", "A cicada"],
+            options: ["A crane", "A carp", "A cicada", "A frog"],
             answer: "A frog",
         },
         {
             question: "What sound follows the frog's jump in the old pond poem?",
-            options: ["The sound of water", "A temple bell", "Rustling reeds", "Thunder"],
+            options: ["A temple bell", "The sound of water", "Rustling reeds", "Thunder"],
             answer: "The sound of water",
         },
         {
             question: "How many syllables are traditionally taught in an English-language haiku?",
-            options: ["17", "14", "21", "12"],
+            options: ["14", "21", "17", "12"],
             answer: "17",
         },
         {
@@ -171,17 +171,17 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
         },
         {
             question: "Bashō's poetry often draws its imagery from what source?",
-            options: ["Nature and the seasons", "Courtroom debates", "Military strategy", "Trade accounts"],
+            options: ["Courtroom debates", "Military strategy", "Trade accounts", "Nature and the seasons"],
             answer: "Nature and the seasons",
         },
         {
             question: "Before becoming a renowned poet, Bashō served in what role?",
-            options: ["A samurai household servant", "A Buddhist abbot", "An imperial painter", "A shipbuilder"],
+            options: ["A Buddhist abbot", "A samurai household servant", "An imperial painter", "A shipbuilder"],
             answer: "A samurai household servant",
         },
         {
             question: "What Japanese term describes a seasonal word in haiku?",
-            options: ["Kigo", "Kabuki", "Kana", "Koto"],
+            options: ["Kabuki", "Kana", "Kigo", "Koto"],
             answer: "Kigo",
         },
         {
@@ -191,22 +191,22 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
         },
         {
             question: "Bashō traveled mainly to do what?",
-            options: ["Observe, reflect, and write", "Command an army", "Collect taxes", "Study foreign law"],
+            options: ["Command an army", "Collect taxes", "Study foreign law", "Observe, reflect, and write"],
             answer: "Observe, reflect, and write",
         },
         {
             question: "Which direction did Bashō's most famous journey take him from Edo?",
-            options: ["North into rural Japan", "West across the sea", "South to Okinawa", "East to America"],
+            options: ["West across the sea", "North into rural Japan", "South to Okinawa", "East to America"],
             answer: "North into rural Japan",
         },
         {
             question: "What was Edo later renamed?",
-            options: ["Tokyo", "Kyoto", "Osaka", "Nara"],
+            options: ["Kyoto", "Osaka", "Tokyo", "Nara"],
             answer: "Tokyo",
         },
         {
             question: "In which year did Bashō die?",
-            options: ["1694", "1594", "1794", "1894"],
+            options: ["1594", "1794", "1894", "1694"],
             answer: "1694",
         },
         {
@@ -216,7 +216,7 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
         },
         {
             question: "Which statement best describes Bashō's legacy?",
-            options: ["He elevated haiku into a profound literary art", "He invented Japanese writing", "He founded the shogunate", "He translated the first Japanese novel"],
+            options: ["He invented Japanese writing", "He founded the shogunate", "He elevated haiku into a profound literary art", "He translated the first Japanese novel"],
             answer: "He elevated haiku into a profound literary art",
         },
     ],
