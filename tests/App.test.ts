@@ -20,7 +20,7 @@ vi.mock('../../edgar-allan-poe/src/App', () => ({
   default: ({ onComplete }: { onComplete: () => void }) =>
     createElement(
       'main',
-      { 'aria-label': 'Edgar Allan Poe' },
+      { 'aria-label': 'Edgar Allan Poe game' },
       createElement('h1', null, 'Edgar Allan Poe'),
       createElement('button', { onClick: onComplete }, 'Continue to Matsuo Basho'),
     ),
@@ -30,7 +30,7 @@ vi.mock('../../matsuo-basho/src/App', () => ({
   default: ({ onComplete }: { onComplete: () => void }) =>
     createElement(
       'main',
-      { 'aria-label': 'Matsuo Basho' },
+      { 'aria-label': 'Matsuo Basho game' },
       createElement('h1', null, 'Matsuo Basho'),
       createElement('button', { onClick: onComplete }, 'Return to the present'),
     ),
