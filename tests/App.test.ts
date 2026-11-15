@@ -16,7 +16,7 @@ const authorMock = (name: string, button: string) => ({
     ),
 });
 
-vi.mock('../../edgar-allan-poe/src/App', () => ({
+vi.mock('../edgar-allan-poe/src/App', () => ({
   default: ({ onComplete }: { onComplete: () => void }) =>
     createElement(
       'main',
@@ -26,7 +26,7 @@ vi.mock('../../edgar-allan-poe/src/App', () => ({
     ),
 }));
 
-vi.mock('../../matsuo-basho/src/App', () => ({
+vi.mock('../matsuo-basho/src/App', () => ({
   default: ({ onComplete }: { onComplete: () => void }) =>
     createElement(
       'main',
