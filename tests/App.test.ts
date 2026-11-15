@@ -44,7 +44,7 @@ function goToQuiz() {
     /^Continue$/i,
     /A Scottish Tragedy/i,
     /^Continue$/i,
-    /Continue journey/i,
+    /Enter the wormhole/i,
   ].forEach(click);
 }
 
