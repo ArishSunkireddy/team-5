@@ -300,6 +300,7 @@ export default function App() {
             <button className="restart wormhole-button" onClick={() => setScreen("quiz")}>Enter the wormhole</button>
           )}
         </section>
+       )
       )}
 
       {opening && (
