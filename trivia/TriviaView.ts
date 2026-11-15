@@ -143,4 +143,70 @@ export class TriviaView {
         document.body.style.cursor = "default";
         this.stage.destroy();
     }
+
+    public showEnd(score: number, message: string, buttonLabel: string, onAction: () => void): void {
+        this.layer.destroy();
+        const width = this.stage.width();
+        const height = this.stage.height();
+
+        const scoreText = new Konva.Text( {
+            x: 0,
+            y: height * 0.22,
+            width,
+            text: `Final Score: ${score}`,
+            fill: "#ffffff",
+            align: "center",
+        });
+
+        const bodyText = new Konva.Text( {
+            x: width * 0.12,
+            y: height * 0.36,
+            width: width * 0.76,
+            text: message,
+            fontSize: 20,
+            lineHeight: 1.5,
+            fill: "#e2e8f0",
+            align: "center",
+        });
+
+        const buttonWidth = 260;
+        const buttonHeight = 52;
+        const buttonGroup = new Konva.Group( {
+            x: (width - buttonWidth) / 2,
+            y: height * 0.62,
+        });
+
+        const buttonBackground = new Konva.Rect( {
+            width: buttonWidth,
+            height: buttonHeight,
+            fill: "#3b82f6",
+        });
+
+        const buttonText = new Konva.Text( {
+            width: buttonWidth,
+            height: buttonHeight,
+            text: buttonLabel,
+            fontSize: 18,
+            fill: "#ffffff",
+            aligh: "center",
+            verticalAlign: "middle",
+        });
+
+        buttonGroup.add(buttonBackground, buttonText);
+        
+        buttonGroup.on("mouseenter", () => {
+            this.stage.container().style.cursor = "pointer";
+            buttonBackground.fill("#2563eb");
+        });
+        buttonGroup.on("mouseleave", () => {
+            this.stage.container().style.cursor = "default";
+            buttonBackground.fill("#3b82f6");
+        });
+        buttonGroup.on("click tap", () => {
+            this.stage.container().style.cursor = "default";
+            onAction();
+        });
+
+        this.layer.add(scoreText, bodyText, buttonGroup);
+    }
 }
