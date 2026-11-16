@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import "./index.css";
 
 type GameState = "briefing" | "playing" | "won" | "lost" | "farewell" | "wormhole" | "quiz" | "results";
 
