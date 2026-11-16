@@ -156,10 +156,7 @@ describe('The Playwright’s Gambit - Prologue & Navigation Flow', () => {
     ).toBeInTheDocument();
 
     click(/Return to the present/i);
-    expect(screen.getByText(/The clock explodes again/i)).toBeInTheDocument();
-    
-    click(/Travel home/i);
-    expect(
+    expect(   
       screen.getByRole('heading', { name: /Worksheet complete/i }),
     ).toBeInTheDocument();
 

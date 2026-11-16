@@ -3,6 +3,7 @@ import { questions } from "./questions";
 import { shuffleQuiz } from "./shuffle";
 import PoeGame from "../../edgar-allan-poe/src/App";
 import BashoGame from "../../matsuo-basho/src/App";
+import "./index.css";
 
 type Screen =
   /* ==========================================
@@ -161,12 +162,20 @@ export default function App() {
   }
 
   if (screen === "poe") {
-    return <PoeGame onComplete={() => setScreen("basho")} />;
+    return (
+      <div className="poe-shell">
+        <PoeGame onComplete={() => setScreen("basho")} />
+      </div>
+    );
   }
 
   if (screen === "basho") {
-    return <BashoGame onComplete={() => setScreen("returnTravel")} />;
-  } 
+    return (
+      <div className="game-shell">
+        <BashoGame onComplete={() => setScreen("complete")} />
+      </div>
+    );
+  }
 
   return (
     <main className={`game ${result ? "show-result" : ""} ${screen === "farewell" || screen === "quiz" || screen === "complete" ? "wormhole-scene" : ""} ${prologue ? "prologue-scene" : ""}`}>

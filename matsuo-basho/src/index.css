@@ -1,11 +1,25 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Noto+Serif+JP:wght@400;600;700&display=swap");
-@import "tailwindcss";
 
-:root {
+.game-shell,
+.game-shell * {
+  box-sizing: border-box;
+}
+
+.game-shell button {
+  font: inherit;
+}
+
+.game-shell {
   font-family: "DM Sans", sans-serif;
   color: #28241d;
-  background: #d7d0bc;
   font-synthesis: none;
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 0 4vw 72px;
+  background:
+    linear-gradient(180deg, rgba(241, 232, 210, 0.94), rgba(199, 205, 190, 0.96)),
+    radial-gradient(circle at 20% 10%, #fff8df 0 7%, transparent 25%);
 }
 
 * {
@@ -30,7 +44,6 @@ button {
   background:
     linear-gradient(180deg, rgba(241, 232, 210, 0.94), rgba(199, 205, 190, 0.96)),
     radial-gradient(circle at 20% 10%, #fff8df 0 7%, transparent 25%);
-}
 
 .game-shell::after {
   position: absolute;
@@ -942,7 +955,7 @@ blockquote {
   opacity: .08;
 }
 
-.wormhole-scene {
+.game-shell .wormhole-scene {
   position: relative;
   z-index: 4;
   display: grid;
@@ -1359,4 +1372,5 @@ footer p {
   footer p {
     display: none;
   }
+}
 }

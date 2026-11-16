@@ -1,22 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;600&display=swap");
-@import "tailwindcss";
 
-:root {
+.poe-shell {
   color: #2b2020;
   background: #21191a;
   font-family: "DM Sans", sans-serif;
   font-synthesis: none;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
   min-height: 100vh;
-}
+
+
+  &,
+  & * {
+    box-sizing: border-box;
+  }
 
 button,
 input {
@@ -891,4 +886,5 @@ button {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
 }
