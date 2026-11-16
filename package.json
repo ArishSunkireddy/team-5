@@ -7,7 +7,9 @@
     "edgar-allan-poe",
     "shakespeare",
     "iambic-pentameter",
-    "trivia"
+    "trivia",
+    "basho",
+    "poe"
   ],
   "engines": {
     "node": "^22.12.0 || >=24.0.0"
@@ -18,7 +20,9 @@
     "build": "npm run build --workspaces",
     "test": "vitest run",
     "dev:poetry": "npm run dev -w iambic-pentameter",
-    "dev:trivia": "npm run dev -w trivia"
+    "dev:trivia": "npm run dev -w trivia",
+    "dev:basho-mvc": "npm run dev -w basho",
+    "dev:poe-mvc": "npm run dev -w poe"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.0",
