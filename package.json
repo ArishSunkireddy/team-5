@@ -20,7 +20,7 @@
     "build": "npm run build --workspaces",
     "test": "vitest run",
     "dev:poetry": "npm run dev -w iambic-pentameter",
-    "dev:trivia": "vite",
+    "dev:trivia": "npm run dev -w trivia",
     "dev:basho-mvc": "npm run dev -w basho",
     "dev:poe-mvc": "npm run dev -w poe"
   },
