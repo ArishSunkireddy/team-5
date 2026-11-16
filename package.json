@@ -18,7 +18,7 @@
     "build": "npm run build --workspaces",
     "test": "vitest run",
     "dev:poetry": "npm run dev -w iambic-pentameter",
-    "dev:trivia": "vite"
+    "dev:trivia": "npm run dev -w trivia"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.0",
