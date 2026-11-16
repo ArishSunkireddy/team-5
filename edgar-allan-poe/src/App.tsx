@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from "react";
+import "./index.css";
 
 type Round = {
   scramble: string;
