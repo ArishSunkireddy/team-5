@@ -171,13 +171,14 @@ export default function App() {
 
   if (screen === "basho") {
     return (
-      <div className="game-shell">
+      <div className="basho-shell">
         <BashoGame onComplete={() => setScreen("complete")} />
       </div>
     );
   }
 
   return (
+   <div className="shakespeare-shell">
     <main className={`game ${result ? "show-result" : ""} ${screen === "farewell" || screen === "quiz" || screen === "complete" ? "wormhole-scene" : ""} ${prologue ? "prologue-scene" : ""}`}>
       {/* ==========================================
          START NEW: Conditional header wrapper
@@ -434,5 +435,6 @@ export default function App() {
         </div>
       )}
     </main>
+   </div>
   );
 }
