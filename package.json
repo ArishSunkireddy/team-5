@@ -25,7 +25,10 @@
     "dev:poe-mvc": "npm run dev -w poe"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
     "@vitejs/plugin-react": "^6.0.0",
+    "happy-dom": "^21.0.4",
     "react": "^19.0.0",
     "typescript": "~5.9.3",
     "vite": "^8.0.5",

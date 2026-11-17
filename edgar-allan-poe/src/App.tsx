@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from "react";
+import "./index.css";
 
 type Round = {
   scramble: string;
@@ -261,7 +262,7 @@ function FeatherIcon() {
   );
 }
 
-function App() {
+function App({ onComplete }: { onComplete: () => void }) {
   const [roundIndex, setRoundIndex] = useState(0);
   const [guess, setGuess] = useState("");
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -438,8 +439,8 @@ function App() {
               <span>Selected Works</span>
             </div>
           )}
-          <button className="primary-button ending-button" onClick={restart}>
-            Return to the first page
+          <button className="primary-button ending-button" onClick={onComplete}>
+            Continue to Matsuo Basho
           </button>
         </section>
       </main>

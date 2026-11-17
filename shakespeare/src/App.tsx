@@ -1,12 +1,22 @@
 import { useState } from "react";
 import { questions } from "./questions";
 import { shuffleQuiz } from "./shuffle";
+import PoeGame from "../../edgar-allan-poe/src/App";
+import BashoGame from "../../matsuo-basho/src/App";
+import "./index.css";
 
 type Screen =
+  /* ==========================================
+     START NEW: Added prologue & return screens
+     ========================================== */
+  | "worksheet" | "timetravel" | "meeting" | "home"
+  /* ==========================================
+     STOP NEW: Added prologue & return screens
+     ========================================== */
   | "history" | "choice" | "mystery" | "nationalism"
   | "context2" | "choice2" | "rome" | "forest"
   | "context3" | "choice3" | "scotland" | "sea"
-  | "farewell" | "quiz" | "complete";
+  | "farewell" | "returnTravel" | "quiz" | "poe" | "basho" | "complete";
 
 function ShakespearePortrait({ cheering = false }: { cheering?: boolean }) {
   return (
@@ -48,7 +58,13 @@ function Choice({
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("history");
+  /* ==========================================
+     START NEW LINE: Default screen set to "worksheet"
+     ========================================== */
+  const [screen, setScreen] = useState<Screen>("worksheet");
+  /* ==========================================
+     STOP NEW LINE: Default screen set to "worksheet"
+     ========================================== */
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -62,7 +78,14 @@ export default function App() {
     : screen === "context3" || screen === "choice3" ? 3
     : 1;
   const opening = ["history", "choice", "context2", "choice2", "context3", "choice3"].includes(screen);
-  const currentQuestion = quizQuestions[questionIndex];
+  /* ==========================================
+     START NEW: Prologue state variable
+     ========================================== */
+  const prologue = ["worksheet", "timetravel", "meeting", "home", "returnTravel"].includes(screen);
+  /* ==========================================
+     STOP NEW: Prologue state variable
+     ========================================== */
+  const currentQuestion = questions[questionIndex];
   const resultContent: Partial<Record<Screen, { label: string; title: string; text: string; crowd: string }>> = {
     mystery: {
       label: "OPENING NIGHT",
@@ -110,8 +133,14 @@ export default function App() {
   }
 
   function nextQuestion() {
-    if (questionIndex === quizQuestions.length - 1) {
-      setScreen("complete");
+    if (questionIndex === questions.length - 1) {
+      /* ==========================================
+         START NEW LINE: Route to returnTravel instead of complete
+         ========================================== */
+      setScreen("poe");
+      /* ==========================================
+         STOP NEW LINE: Route to returnTravel instead of complete
+         ========================================== */
       return;
     }
     setQuestionIndex((index) => index + 1);
@@ -123,19 +152,134 @@ export default function App() {
     setQuestionIndex(0);
     setSelectedAnswer(null);
     setScore(0);
-    setScreen("history");
+    /* ==========================================
+     START NEW LINE: Reset game back to worksheet
+     ========================================== */
+    setScreen("worksheet");
+    /* ==========================================
+     STOP NEW LINE: Reset game back to worksheet
+     ========================================== */
+  }
+
+  if (screen === "poe") {
+    return (
+      <div className="poe-shell">
+        <PoeGame onComplete={() => setScreen("basho")} />
+      </div>
+    );
+  }
+
+  if (screen === "basho") {
+    return (
+      <div className="basho-shell">
+        <BashoGame onComplete={() => setScreen("complete")} />
+      </div>
+    );
   }
 
   return (
-    <main className={`game ${result ? "show-result" : ""} ${screen === "farewell" || screen === "quiz" || screen === "complete" ? "wormhole-scene" : ""}`}>
-      <div className="game-title">
-        <span>THE PLAYWRIGHT&rsquo;S GAMBIT</span>
-        <small>London, 1588</small>
-      </div>
+   <div className="shakespeare-shell">
+    <main className={`game ${result ? "show-result" : ""} ${screen === "farewell" || screen === "quiz" || screen === "complete" ? "wormhole-scene" : ""} ${prologue ? "prologue-scene" : ""}`}>
+      {/* ==========================================
+         START NEW: Conditional header wrapper
+         ========================================== */}
+      {!prologue && (
+        <>
+          <div className="game-title">
+            <span>THE PLAYWRIGHT&rsquo;S GAMBIT</span>
+            <small>{screen === "quiz" || screen === "complete" ? "Present day" : "London, 1588"}</small>
+          </div>
+          <ShakespearePortrait cheering={success} />
+        </>
+      )}
+      {/* ==========================================
+         STOP NEW: Conditional header wrapper
+         ========================================== */}
 
-      <ShakespearePortrait cheering={success} />
+      {/* ==========================================
+         START NEW BLOCK: Prologue screens (worksheet, timetravel, meeting, home, returnTravel)
+         ========================================== */}
+      {screen === "worksheet" && (
+        <section className="prologue worksheet-scene" aria-labelledby="worksheet-heading">
+          <div className="classroom-copy">
+            <p className="scene-label">PRESENT DAY &middot; AFTERNOON</p>
+            <h1 id="worksheet-heading">One worksheet.<br />A world of authors.</h1>
+            <p>You are matching literary eras to their authors when the old classroom clock begins to tick strangely.</p>
+            <button className="scene-button" onClick={() => setScreen("timetravel")}>Start time travel</button>
+          </div>
+          <div className="desk" aria-label="A literature worksheet on a classroom desk">
+            <div className="clock" aria-hidden="true">
+              <span className="clock-hand clock-hour" />
+              <span className="clock-hand clock-minute" />
+              <i />
+            </div>
+            <div className="worksheet-paper">
+              <div className="paper-heading">
+                <span>LITERATURE</span>
+                <strong>Authors &amp; Eras</strong>
+              </div>
+              <div className="worksheet-row worksheet-labels"><b>ERA</b><b>AUTHOR</b></div>
+              <div className="worksheet-row active-row"><span>16th Century</span><span>Shakespeare</span></div>
+              <div className="worksheet-row"><span>19th Century</span><span>Edgar Allan Poe</span></div>
+              <div className="worksheet-row"><span>17th Century</span><span>Matsuo Basho</span></div>
+              <div className="pencil-line" />
+            </div>
+          </div>
+        </section>
+      )}
 
-      {opening ? (
+      {screen === "timetravel" && (
+        <section className="prologue travel-scene" aria-labelledby="travel-heading">
+          <div className="time-rings" aria-hidden="true"><span /><span /><span /><span /></div>
+          <div className="travel-copy">
+            <p className="scene-label">12:47 PM &middot; OR PERHAPS 1588</p>
+            <h1 id="travel-heading">The clock explodes.</h1>
+            <p>The classroom folds into a whirl of ink, paper, and golden light. The unfinished worksheet vanishes from beneath your hand.</p>
+            <button className="scene-button light-button" onClick={() => setScreen("meeting")}>Hold on</button>
+          </div>
+        </section>
+      )}
+
+      {screen === "meeting" && (
+        <section className="prologue meeting-scene" aria-labelledby="meeting-heading">
+          <div className="arrival-copy">
+            <p className="scene-label">LONDON &middot; THE 16TH CENTURY</p>
+            <p className="arrival-narration">You land in a cramped room smelling of candle wax and ink. A man at a writing desk scratches his head over two unfinished play ideas. When he sees you, his eyes brighten.</p>
+            <p className="speaker">WILLIAM SHAKESPEARE</p>
+            <h1 id="meeting-heading">&ldquo;Art thou&hellip; God?&rdquo;</h1>
+            <p className="dialogue meeting-dialogue">&ldquo;You appeared in a flash of light just as I begged the heavens for help.&rdquo;</p>
+            <button className="scene-button" onClick={() => setScreen("home")}>&ldquo;No. I&rsquo;m a student.&rdquo;</button>
+          </div>
+          <ShakespearePortrait />
+        </section>
+      )}
+
+      {screen === "home" && (
+        <section className="prologue home-scene" aria-labelledby="home-heading">
+          <p className="home-kicker">A JOURNEY THROUGH SHAKESPEARE&rsquo;S WORLD</p>
+          <h1 id="home-heading">The Playwright&rsquo;s<br /><em>Gambit</em></h1>
+          <div className="home-rule"><span>1588</span><i /><span>1603</span></div>
+          <p>Guide William Shakespeare through three turning points in history. Choose the stories he will tell, then bring what you learn back home.</p>
+          <button className="scene-button home-button" onClick={() => setScreen("history")}>Begin the story</button>
+        </section>
+      )}
+
+      {screen === "returnTravel" && (
+        <section className="prologue travel-scene" aria-labelledby="return-heading">
+          <div className="time-rings" aria-hidden="true"><span /><span /><span /><span /></div>
+          <div className="travel-copy">
+            <p className="scene-label">Question 20 complete &middot; The clock begins to shake</p>
+            <h1 id="return-heading">The clock explodes again.</h1>
+            <p>A glowing wormhole opens as the room dissolves into golden light. You hold tight to everything you learned and travel back to the present.</p>
+            <button className="scene-button light-button" onClick={() => setScreen("complete")}>Travel home</button>
+          </div>
+        </section>
+      )}
+      {/* ==========================================
+         STOP NEW BLOCK: Prologue screens
+         ========================================== */}
+
+      {!prologue && (opening ? (
         <section className="story">
           <p className="speaker">WILLIAM SHAKESPEARE</p>
           <h1>
@@ -176,6 +320,7 @@ export default function App() {
             <button className="restart wormhole-button" onClick={() => setScreen("quiz")}>Enter the wormhole</button>
           )}
         </section>
+       )
       )}
 
       {opening && (
@@ -269,14 +414,27 @@ export default function App() {
       {screen === "complete" && (
         <div className="quiz-layer" role="dialog" aria-modal="true" aria-labelledby="result-heading">
           <section className="quiz-box final-box">
-            <p className="speaker">YOUR FINAL SCORE</p>
-            <div className="final-score">{score}<small>/ 200 points</small></div>
-            <h2 id="result-heading">{score >= 150 ? "Congrats!" : "Come back another time to study him again…"}</h2>
-            <p>{score >= 150 ? "Your knowledge of the Bard has carried you safely home." : "Shakespeare's stories will be waiting for your return."}</p>
-            <button className="final-button" onClick={restartGame}>Play again</button>
+            <p className="speaker">BACK IN THE PRESENT</p>
+            <h2 id="result-heading">Worksheet complete!</h2>
+            {/* ==========================================
+               START NEW: Completed worksheet paper card
+               ========================================== */}
+            <div className="worksheet-paper completed-paper">
+              <div className="paper-heading"><span>LITERATURE</span><strong>Authors &amp; Eras</strong></div>
+              <div className="worksheet-row worksheet-labels"><b>ERA</b><b>AUTHOR</b></div>
+              <div className="worksheet-row"><span>16th Century</span><span>Shakespeare</span></div>
+              <div className="worksheet-row"><span>19th Century</span><span>Edgar Allan Poe</span></div>
+              <div className="worksheet-row"><span>17th Century</span><span>Matsuo Basho</span></div>
+            </div>
+            {/* ==========================================
+               STOP NEW: Completed worksheet paper card
+               ========================================== */}
+            <p>You traveled through time and learned so much about these authors, their eras, and the stories they shared with the world.</p> 
+	    <button className="final-button" onClick={restartGame}>Play again</button>
           </section>
         </div>
       )}
     </main>
+   </div>
   );
 }
