@@ -1,28 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Noto+Serif+JP:wght@400;600;700&display=swap");
 
-.game-shell,
-.game-shell * {
-  box-sizing: border-box;
-}
-
-.game-shell button {
-  font: inherit;
-}
-
-.game-shell {
-  font-family: "DM Sans", sans-serif;
-  color: #28241d;
-  font-synthesis: none;
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-  padding: 0 4vw 72px;
-  background:
-    linear-gradient(180deg, rgba(241, 232, 210, 0.94), rgba(199, 205, 190, 0.96)),
-    radial-gradient(circle at 20% 10%, #fff8df 0 7%, transparent 25%);
-}
-
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -30,6 +10,9 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  font-family: "DM Sans", sans-serif;
+  color: #28241d;
+  background: #f1e8d2;
 }
 
 button {
@@ -41,9 +24,13 @@ button {
   min-height: 100vh;
   overflow: hidden;
   padding: 0 4vw 72px;
+  font-family: "DM Sans", sans-serif;
+  color: #28241d;
+  font-synthesis: none;
   background:
     linear-gradient(180deg, rgba(241, 232, 210, 0.94), rgba(199, 205, 190, 0.96)),
     radial-gradient(circle at 20% 10%, #fff8df 0 7%, transparent 25%);
+}
 
 .game-shell::after {
   position: absolute;
@@ -1372,5 +1359,4 @@ footer p {
   footer p {
     display: none;
   }
-}
 }
