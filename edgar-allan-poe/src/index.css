@@ -6,12 +6,13 @@
   font-family: "DM Sans", sans-serif;
   font-synthesis: none;
   min-height: 100vh;
+}
 
-
-  &,
-  & * {
-    box-sizing: border-box;
-  }
+ .poe-shell *,
+ .poe-shell *::before,
+ .poe-shell *::after {
+   box-sizing: border-box;
+}
 
 button,
 input {
@@ -886,5 +887,4 @@ button {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
-}
 }
