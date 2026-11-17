@@ -2,6 +2,7 @@ import { PoeController } from "./PoeController";
 import { poeRounds } from "./rounds";
 import { TriviaController } from "../trivia/TriviaController";
 import { individualTrivia, TriviaEndings } from "../trivia/questions";
+import { menuUrl } from "../menu/destinations";
 
 // Poe's stage: the anagram rounds first, then the shared trivia
 const poe = new PoeController(

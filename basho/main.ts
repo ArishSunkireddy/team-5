@@ -2,6 +2,7 @@ import { BashoController } from "./BashoController";
 import { bashoPoems, BashoScreens } from "./poems";
 import { TriviaController } from "../trivia/TriviaController";
 import { individualTrivia, TriviaEndings } from "../trivia/questions";
+import { menuUrl } from "../menu/destinations";
 
 // Bashō's stage: the haiku rounds first, then the shared trivia
 const basho = new BashoController(
