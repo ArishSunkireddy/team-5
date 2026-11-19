@@ -63,6 +63,8 @@ export class TriviaView {
             y: 100,
             width: this.stage.width() - 120,
             fill: "#ffffff",
+            fontSize: 30,
+            align: "center",
             lineHeight: 1.5,
         });
         this.quizGroup.add(this.promptText);
@@ -164,6 +166,7 @@ export class TriviaView {
             width,
             text: `Final Score: ${score}`,
             fill: "#ffffff",
+            fontSize: 30,
             align: "center",
         });
 

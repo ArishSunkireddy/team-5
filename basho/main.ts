@@ -24,7 +24,7 @@ function startTrivia(): void {
                 console.log(`Returned to storyline with score: ${finalScore}`);
                 const container = document.getElementById("container");
                 if (container) {
-                    container.innerHTML = `<p style="padding: 20px;">Storyline resumed! Final score: ${finalScore}</p>`;
+                    window.location.href = menuUrl + "#play";;
                 }
             },
         },
