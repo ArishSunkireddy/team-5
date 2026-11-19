@@ -1,3 +1,4 @@
+import ReturnToMainMenu from "../../menu/ReturnToMainMenu";
 import { useReducer } from 'react';
 import { poemChallenges } from './data/poemChallenges';
 import { gameReducer, initialState } from './game/state';
@@ -9,6 +10,10 @@ import { TrailHeader } from './components/Presentation';
 
 // Landscape and screen composition adapted from the Figma Make prototype.
 export default function App() {
+  return <><ReturnToMainMenu /><PoetryGame /></>;
+}
+
+function PoetryGame() {
   const [state, dispatch] = useReducer(gameReducer, undefined, () => initialState());
   const challenge = poemChallenges[state.roundIndex];
   const onReturn = () => {

@@ -1,0 +1,25 @@
+/* Outside game roots and above their fixed feedback/quiz overlays. */
+.game-menu-return {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 1000;
+  max-width: calc(100vw - 24px);
+}
+
+.game-menu-return button {
+  display: block;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  background: #234d77;
+  color: #fff;
+  font: 16px/1.4 system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.game-menu-return button:focus-visible {
+  outline: 3px solid #eebf54;
+  outline-offset: 3px;
+}
