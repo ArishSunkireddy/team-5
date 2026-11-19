@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReturnToMainMenu from "../../menu/ReturnToMainMenu";
 import { questions } from "./questions";
 import { shuffleQuiz } from "./shuffle";
 import PoeGame from "../../edgar-allan-poe/src/App";
@@ -58,6 +59,10 @@ function Choice({
 }
 
 export default function App() {
+  return <><ReturnToMainMenu /><Storyline /></>;
+}
+
+function Storyline() {
   /* ==========================================
      START NEW LINE: Default screen set to "worksheet"
      ========================================== */
