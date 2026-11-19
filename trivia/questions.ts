@@ -195,7 +195,7 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
             answer: "Observe, reflect, and write",
         },
         {
-            question: "Which direction did Bashō's most famous journey take him from Edo?",
+            question: "In his famous travelogue 'The Narrow Road to the Deep North,' which direction did Matsuo Bashō travel from Edo?",
             options: ["West across the sea", "North into rural Japan", "South to Okinawa", "East to America"],
             answer: "North into rural Japan",
         },
