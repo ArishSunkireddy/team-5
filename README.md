@@ -20,10 +20,11 @@ Don't run `npm install` inside a game folder, and don't commit `node_modules` or
 | `npm run dev:poe-mvc` | Edgar Allan Poe game at http://localhost:5185 |
 | `npm run dev:shakespeare` | Shakespeare game at http://localhost:5186 |
 | `npm run dev:poetry` | Iambic pentameter game at http://localhost:5187 |
+| `npm run dev:trivia` | Trivia game at http://localhost:5188 |
 | `npm run typecheck -w iambic-pentameter` | Type-check the poetry workspace |
 | `npm test` | Runs everything in `tests/` |
 | `npm run build` | Builds every game |
-|`npm run dev:menu`| Main Menu at http://localhost:5173|
+|`npm run dev:menu`| Main Menu at htnpm tp://localhost:5173|
 |`npm run dev:all`| Builds every game and allows you to enter the main menu. Which is accessed at http://localhost:5173|
 
 To add a dependency to one game: `npm install <package> -w <game-folder>`.
