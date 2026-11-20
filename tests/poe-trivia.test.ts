@@ -8,7 +8,7 @@ describe('Trivia state is accurate to design proposal', () => {
     });
 
     it('checks if the answer exists', () => {
-        triviaQuestions.forEach((item, idx) => {
+        triviaQuestions.forEach((item) => {
             const answer = item.options.includes(item.answer);
             expect(answer).toBe(true);
         });

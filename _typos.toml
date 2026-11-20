@@ -1,0 +1,23 @@
+# Spell check config for `crate-ci/typos` (runs in CI). Only flags known misspellings,
+# so it is quiet on names and poetry. Add real false positives below.
+[files]
+extend-exclude = [
+  "package-lock.json",
+  "**/dist/**",
+  "**/node_modules/**",
+  "**/.figma/**",
+  "*.svg",
+  "coverage/**",
+  "playwright-report/**",
+]
+
+[default]
+# Anagram puzzles are deliberately scrambled, e.g. scramble: "HTE AVERN".
+extend-ignore-re = ['scramble:\s*"[^"]*"']
+
+[default.extend-words]
+# "da-DUM da-DUM": the stressed beat in the iambic pentameter game.
+dum = "dum"
+# Scrambled anagram text in the React Poe game.
+hte = "hte"
+fo = "fo"

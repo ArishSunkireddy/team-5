@@ -1,5 +1,5 @@
 import { TriviaView } from "./TriviaView";
-import { TriviaQuestion, TriviaEnding, TriviaEndings } from "./questions";
+import { TriviaQuestion, TriviaEnding } from "./questions";
 
 export interface TriviaControl {
     onReturn: (finalScore: number) => void;
