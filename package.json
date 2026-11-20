@@ -20,6 +20,14 @@
     "dev:shakespeare": "npm run dev -w shakespeare",
     "build": "npm run build --workspaces",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "npm run build && playwright test",
+    "typecheck": "tsc --noEmit -p edgar-allan-poe && tsc --noEmit -p shakespeare && tsc --noEmit -p iambic-pentameter && tsc --noEmit -p trivia && tsc --noEmit -p basho && tsc --noEmit -p poe && tsc --noEmit -p menu && tsc --noEmit -p e2e",
+    "lint": "oxlint --deny-warnings trivia basho poe menu tests e2e scripts iambic-pentameter/src shakespeare/src edgar-allan-poe/src",
+    "format:check": "oxfmt --check trivia basho poe menu tests e2e scripts iambic-pentameter/src shakespeare/src edgar-allan-poe/src vitest.config.ts playwright.config.ts",
+    "check:lockfile": "node scripts/check-lockfile.mjs",
+    "verify": "npm run check:lockfile && npm run lint && npm run typecheck && npm run test:coverage && npm run build",
+    "prepare": "husky",
     "dev:poetry": "npm run dev -w iambic-pentameter",
     "dev:trivia": "npm run dev -w trivia",
     "dev:basho-mvc": "npm run dev -w basho",
@@ -28,14 +36,19 @@
     "dev:all": "npm run dev:menu & npm run dev:basho-mvc & npm run dev:poe-mvc & npm run dev:shakespeare & npm run dev:poetry & wait"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@vitejs/plugin-react": "^6.0.0",
+    "@vitest/coverage-v8": "5.0.5",
     "happy-dom": "^21.0.4",
+    "husky": "^9.1.7",
+    "oxfmt": "^0.2.0",
+    "oxlint": "^1.94.0",
     "react": "^19.0.0",
     "typescript": "~5.9.3",
     "vite": "^8.0.5",
-    "vitest": "^5.0.5"
+    "vitest": "5.0.5"
   },
   "dependencies": {
     "konva": "^10.9.1"

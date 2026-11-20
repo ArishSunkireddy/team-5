@@ -3,6 +3,7 @@ import { bashoPoems, BashoScreens } from "./poems";
 import { TriviaController } from "../trivia/TriviaController";
 import { individualTrivia, TriviaEndings } from "../trivia/questions";
 import { mountMenuReturn } from "../menu/mountMenuReturn";
+import { menuUrl } from "../menu/destinations";
 
 mountMenuReturn();
 

@@ -56,7 +56,7 @@ not establish native drag behavior, actual focus, or visual layout.
 ## Automated verification
 
 - Poetry tests: 74 passing.
-- Full suite: 114 passing across nine test files.
+- Full suite: 192 passing across thirteen test files.
 - TypeScript: all three workspace configs pass.
 - Production build: all three workspaces pass.
 - `git diff --check`: passes.
