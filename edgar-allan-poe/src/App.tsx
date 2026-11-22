@@ -313,7 +313,8 @@ function App({ onComplete }: { onComplete: () => void }) {
     setResolved(null);
   }
 
-  function restart() {
+  // Unused for now (no restart button yet); underscore marks it as intentional for the linter.
+  function _restart() {
     setRoundIndex(0);
     setGuess("");
     setGuesses([]);

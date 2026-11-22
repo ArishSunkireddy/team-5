@@ -1,6 +1,7 @@
 node_modules/
 dist/
 build/
+coverage/
 .vite/
 *.tsbuildinfo
 *.log
@@ -14,3 +15,5 @@ Thumbs.db
 # Figma Make exports bring their own lockfiles, so keep those out.
 pnpm-lock.yaml
 */package-lock.json
+playwright-report/
+test-results/

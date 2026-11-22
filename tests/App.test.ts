@@ -6,16 +6,6 @@ import App from '../shakespeare/src/App';
 import { within } from '@testing-library/react'; // Add 'within' to your existing testing-library import
 
 // Mock external author apps so multi-app navigation can be tested safely
-const authorMock = (name: string, button: string) => ({
-  default: ({ onComplete }: { onComplete: () => void }) =>
-    createElement(
-      'main',
-      { 'aria-label': `${name} game` },
-      createElement('h1', null, name),
-      createElement('button', { onClick: onComplete }, button),
-    ),
-});
-
 vi.mock('../edgar-allan-poe/src/App', () => ({
   default: ({ onComplete }: { onComplete: () => void }) =>
     createElement(
