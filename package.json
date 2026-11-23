@@ -4,27 +4,25 @@
   "version": "0.0.0",
   "type": "module",
   "workspaces": [
-    "edgar-allan-poe",
-    "shakespeare",
     "iambic-pentameter",
     "trivia",
     "basho",
     "poe",
-    "menu"
+    "menu",
+    "shakespeare-mvc"
   ],
   "engines": {
     "node": "^22.12.0 || >=24.0.0"
   },
   "scripts": {
-    "dev:poe": "npm run dev -w edgar-allan-poe",
-    "dev:shakespeare": "npm run dev -w shakespeare",
+    "dev:shakespeare-mvc": "npm run dev -w shakespeare-mvc",
     "build": "npm run build --workspaces",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "npm run build && playwright test",
-    "typecheck": "tsc --noEmit -p edgar-allan-poe && tsc --noEmit -p shakespeare && tsc --noEmit -p iambic-pentameter && tsc --noEmit -p trivia && tsc --noEmit -p basho && tsc --noEmit -p poe && tsc --noEmit -p menu && tsc --noEmit -p e2e",
-    "lint": "oxlint --deny-warnings trivia basho poe menu tests e2e scripts iambic-pentameter/src shakespeare/src edgar-allan-poe/src",
-    "format:check": "oxfmt --check trivia basho poe menu tests e2e scripts iambic-pentameter/src shakespeare/src edgar-allan-poe/src vitest.config.ts playwright.config.ts",
+    "typecheck": "tsc --noEmit -p iambic-pentameter && tsc --noEmit -p trivia && tsc --noEmit -p basho && tsc --noEmit -p poe && tsc --noEmit -p menu && tsc --noEmit -p shakespeare-mvc && tsc --noEmit -p e2e",
+    "lint": "oxlint --deny-warnings trivia basho poe menu shakespeare-mvc tests e2e scripts iambic-pentameter/src",
+    "format:check": "oxfmt --check trivia basho poe menu shakespeare-mvc tests e2e scripts iambic-pentameter/src vitest.config.ts playwright.config.ts",
     "check:lockfile": "node scripts/check-lockfile.mjs",
     "verify": "npm run check:lockfile && npm run lint && npm run typecheck && npm run test:coverage && npm run build",
     "prepare": "husky",
@@ -33,7 +31,7 @@
     "dev:basho-mvc": "npm run dev -w basho",
     "dev:poe-mvc": "npm run dev -w poe",
     "dev:menu": "npm run dev -w menu",
-    "dev:all": "npm run dev:menu & npm run dev:basho-mvc & npm run dev:poe-mvc & npm run dev:shakespeare & npm run dev:poetry & wait"
+    "dev:all": "npm run dev:menu & npm run dev:basho-mvc & npm run dev:poe-mvc & npm run dev:shakespeare-mvc & npm run dev:poetry & wait"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",

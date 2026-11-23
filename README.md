@@ -16,9 +16,9 @@ Don't run `npm install` inside a game folder, and don't commit `node_modules` or
 
 | Command | What it does |
 |---|---|
-| `npm run dev:poe-mvc` | Matsuo Basho game at http://localhost:5184 |
+| `npm run dev:basho-mvc` | Matsuo Basho game at http://localhost:5184 |
 | `npm run dev:poe-mvc` | Edgar Allan Poe game at http://localhost:5185 |
-| `npm run dev:shakespeare` | Shakespeare game at http://localhost:5186 |
+| `npm run dev:shakespeare-mvc` | Shakespeare game at http://localhost:5186 |
 | `npm run dev:poetry` | Iambic pentameter game at http://localhost:5187 |
 | `npm run dev:trivia` | Trivia game at http://localhost:5188 |
 | `npm test` | Runs everything in `tests/` |

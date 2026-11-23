@@ -1,5 +1,6 @@
 import { TriviaView } from "./TriviaView";
 import { TriviaQuestion, TriviaEnding } from "./questions";
+import { shuffle } from "./shuffle";
 
 export interface TriviaControl {
     onReturn: (finalScore: number) => void;
@@ -7,7 +8,9 @@ export interface TriviaControl {
 
 export class TriviaController {
     private view: TriviaView;
+    private source: TriviaQuestion[];
     private questions: TriviaQuestion[];
+    private shuffleQuiz: boolean;
     private ending: TriviaEnding;
     private control: TriviaControl;
     private pointsPerQuestion: number;
@@ -21,9 +24,12 @@ export class TriviaController {
         ending: TriviaEnding,
         control: TriviaControl,
         containerID: string = "container",
-        pointsPerQuestion: number = 10
+        pointsPerQuestion: number = 10,
+        shuffleQuiz: boolean = false
     ) {
+        this.source = questions;
         this.questions = questions;
+        this.shuffleQuiz = shuffleQuiz;
         this.ending = ending;
         this.control = control;
         this.pointsPerQuestion = pointsPerQuestion;
@@ -33,10 +39,14 @@ export class TriviaController {
     }
 
     public start(): void {
-        if (this.questions.length === 0) {
+        if (this.source.length === 0) {
             return;
         }
         this.clearTimer();
+        // A fresh order on every playthrough (and every retry), so it can't be won by memorizing positions
+        this.questions = this.shuffleQuiz
+            ? shuffle(this.source).map((question) => ({ ...question, options: shuffle(question.options) }))
+            : this.source;
         this.currIdx = 0;
         this.score = 0;
         this.answered = false;

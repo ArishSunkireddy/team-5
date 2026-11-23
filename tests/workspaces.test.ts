@@ -15,11 +15,11 @@ const workspaces: string[] = rootPkg.workspaces;
 
 // Folders that have a package.json but are intentionally NOT workspaces. Remove an entry
 // when the folder is deleted or promoted to a real workspace.
-const KNOWN_ORPHANS = ["matsuo-basho"];
+const KNOWN_ORPHANS: string[] = [];
 
 describe("npm workspaces", () => {
   it("lists at least the games and the menu", () => {
-    expect(workspaces).toEqual(expect.arrayContaining(["menu", "basho", "poe", "trivia", "shakespeare", "iambic-pentameter"]));
+    expect(workspaces).toEqual(expect.arrayContaining(["menu", "basho", "poe", "trivia", "shakespeare-mvc", "iambic-pentameter"]));
   });
 
   it("has no package.json folder missing from the workspaces list", () => {
