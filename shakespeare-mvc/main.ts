@@ -3,7 +3,7 @@ import { storyRounds, prologueCards, farewellCard } from "./story";
 import { TriviaController } from "../trivia/TriviaController";
 import { individualTrivia, TriviaEndings } from "../trivia/questions";
 import { mountMenuReturn } from "../menu/mountMenuReturn";
-import { menuUrl } from "../menu/destinations";
+import { finishAuthor } from "../menu/progress";
 
 mountMenuReturn();
 
@@ -23,9 +23,7 @@ function startTrivia(): void {
         individualTrivia.shakespeare,  // Full 20-question array
         TriviaEndings.shakespeare,     // Uses the real passingScore: 150
         {
-            onReturn: () => {
-                window.location.href = menuUrl + "#play";
-            },
+            onReturn: () => finishAuthor("shakespeare"),
         },
         "container",
         10,
