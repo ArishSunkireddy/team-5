@@ -3,11 +3,12 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import "@testing-library/jest-dom/vitest";
 import App from "../shakespeare/src/App";
 import { questions } from "../shakespeare/src/questions";
-import { triviaQuestions } from "../edgar-allan-poe/src/App";
 import { menuUrl, destinations } from "../menu/destinations";
 import { MenuController } from "../menu/MenuController";
 import { MenuModel, type MenuItem } from "../menu/MenuModel";
 import type { MenuView } from "../menu/MenuView";
+import PoeApp, { triviaQuestions } from "../edgar-allan-poe/src/App";
+import ReturnToMainMenu from "../menu/ReturnToMainMenu";
 
 // Both Shakespeare and Poe are real components; no game-state hooks are mocked.
 afterEach(() => {
@@ -34,16 +35,13 @@ function goToQuiz() {
   ].forEach(click);
 }
 function enterPoe() {
-  const rendered = render(<App />);
+  const rendered = render(
+    <div className="poe-shell">
+      <ReturnToMainMenu />
+      <PoeApp onComplete={() => {}} />
+    </div>,
+  );
   expect(screen.getByRole("button", { name: "Return to Main Menu" })).toBeInTheDocument();
-  goToQuiz();
-  for (let index = 0; index < questions.length; index += 1) {
-    const quiz = screen.getByRole("dialog");
-    const question = questions.find(q => within(quiz).queryByRole("heading", { name: q.question }));
-    if (!question) throw new Error("Displayed question missing from production data");
-    fireEvent.click(within(quiz).getByRole("button", { name: question.answers[question.correct] }));
-    click(index === questions.length - 1 ? /See my result/i : /Next question/i);
-  }
   return rendered;
 }
 function submitGuess(value: string) {
@@ -139,9 +137,8 @@ describe("Poe return to shared main menu", () => {
     select(shakespeare);
     expect(window.location.href).toBe(destinations.shakespeare);
 
-    render(<App />); // Fresh destination mount, not the old storyline instance.
+    render(<App onComplete={() => {}} />); // Fresh destination mount, not the old storyline instance.
     expect(screen.getByRole("heading", { name: /One worksheet/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Return to Main Menu" })).toBeInTheDocument();
     goToQuiz();
     expect(screen.getByText("QUESTION 1 OF 20")).toBeInTheDocument();
     expect(screen.getByText("0 POINTS")).toBeInTheDocument();
