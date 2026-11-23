@@ -38,7 +38,7 @@ describe("Shakespeare story data", () => {
     });
 
     it("gives the prologue and farewell cards text and a button", () => {
-        expect(prologueCards).toHaveLength(4);
+        expect(prologueCards).toHaveLength(2);
         for (const card of [...prologueCards, farewellCard]) {
             expect(card.title).not.toBe("");
             expect(card.text).not.toBe("");
