@@ -3,7 +3,7 @@ import { poeRounds } from "./rounds";
 import { TriviaController } from "../trivia/TriviaController";
 import { individualTrivia, TriviaEndings } from "../trivia/questions";
 import { mountMenuReturn } from "../menu/mountMenuReturn";
-import { menuUrl } from "../menu/destinations";
+import { finishAuthor } from '../menu/progress';
 
 mountMenuReturn();
 
@@ -27,10 +27,7 @@ function startTrivia(): void {
         {
             onReturn: (finalScore) => {
                 console.log(`Returned to storyline with score: ${finalScore}`);
-                const container = document.getElementById("container");
-                if (container) {
-                    window.location.href = menuUrl + "#play";
-                }
+                finishAuthor("poe"); 
             },
         },
         "container",
