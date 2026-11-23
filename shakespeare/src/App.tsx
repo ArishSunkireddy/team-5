@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ReturnToMainMenu from "../../menu/ReturnToMainMenu";
 import { questions } from "./questions";
 import { shuffleQuiz } from "./shuffle";
 import "./index.css";
@@ -62,7 +61,7 @@ export default function App({ onComplete }: { onComplete: () => void }){
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   // A fresh order on every playthrough, so replays can't be won by memorizing positions.
-  const [quizQuestions, setQuizQuestions] = useState(() => shuffleQuiz(questions));
+  const [quizQuestions] = useState(() => shuffleQuiz(questions));
   const resultScreens: Screen[] = ["mystery", "nationalism", "rome", "forest", "scotland", "sea"];
   const result = resultScreens.includes(screen);
   const success = ["nationalism", "rome", "scotland"].includes(screen);
