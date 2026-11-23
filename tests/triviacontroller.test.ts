@@ -147,3 +147,45 @@ describe ("TriviaController", () => {
         expect(mockView.updateQuestion).toHaveBeenLastCalledWith(sampleQuestion[0], 1, 2, 0);
     });
 });
+describe("TriviaController shuffling", () => {
+    const longQuiz: TriviaQuestion[] = Array.from({ length: 6 }, (_, n) => ({
+        question: `Question ${n}`,
+        options: [`A${n}`, `B${n}`, `C${n}`, `D${n}`],
+        answer: `B${n}`,
+    }));
+
+    const shown = () => {
+        const view = (TriviaView as unknown as ReturnType<typeof vi.fn>).mock.results.at(-1)!.value;
+        return view.updateQuestion.mock.calls.map((call: unknown[]) => call[0] as TriviaQuestion);
+    };
+
+    beforeEach(() => {
+        vi.useFakeTimers();
+        vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+    });
+
+    it("keeps the given order by default", () => {
+        new TriviaController(longQuiz, sampleEnding, { onReturn: vi.fn() }).start();
+        expect(shown()[0]).toBe(longQuiz[0]);
+    });
+
+    it("shuffles the options but keeps the answer among them when asked to", () => {
+        vi.spyOn(Math, "random").mockReturnValue(0);        // makes every shuffle rotate the same way
+        new TriviaController(longQuiz, sampleEnding, { onReturn: vi.fn() }, "container", 10, true).start();
+        const first = shown()[0];
+        expect(first.options).not.toEqual(longQuiz.find((q) => q.question === first.question)!.options);
+        expect([...first.options].sort()).toEqual(["A" + first.question.slice(-1), "B" + first.question.slice(-1), "C" + first.question.slice(-1), "D" + first.question.slice(-1)]);
+        expect(first.options).toContain(first.answer);
+    });
+
+    it("never changes the questions it was given", () => {
+        const before = JSON.stringify(longQuiz);
+        new TriviaController(longQuiz, sampleEnding, { onReturn: vi.fn() }, "container", 10, true).start();
+        expect(JSON.stringify(longQuiz)).toBe(before);
+    });
+});

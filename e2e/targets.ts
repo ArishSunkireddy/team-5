@@ -19,5 +19,6 @@ export const targets: SmokeTarget[] = [
   { workspace: "trivia", port: 4173, mount: "#container", canvas: true, title: /Trivia/ },
   { workspace: "shakespeare", port: 4174, mount: "#root", canvas: false },
   { workspace: "iambic-pentameter", port: 4175, mount: "#root", canvas: false, title: /Iambic Pentameter/ },
+  { workspace: "shakespeare-mvc", port: 4177, mount: "#container", canvas: true, title: /Shakespeare/ },
   { workspace: "edgar-allan-poe", port: 4176, mount: "#root", canvas: false },
 ];
