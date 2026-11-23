@@ -1,6 +1,6 @@
 import { TriviaView } from "./TriviaView";
 import { TriviaQuestion, TriviaEnding } from "./questions";
-import { shuffle } from "../shakespeare/src/shuffle";
+import { shuffle } from "./shuffle";
 
 export interface TriviaControl {
     onReturn: (finalScore: number) => void;
