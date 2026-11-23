@@ -2,8 +2,6 @@ import { useState } from "react";
 import ReturnToMainMenu from "../../menu/ReturnToMainMenu";
 import { questions } from "./questions";
 import { shuffleQuiz } from "./shuffle";
-import PoeGame from "../../edgar-allan-poe/src/App";
-import BashoGame from "../../matsuo-basho/src/App";
 import "./index.css";
 
 type Screen =
@@ -17,7 +15,7 @@ type Screen =
   | "history" | "choice" | "mystery" | "nationalism"
   | "context2" | "choice2" | "rome" | "forest"
   | "context3" | "choice3" | "scotland" | "sea"
-  | "farewell" | "returnTravel" | "quiz" | "poe" | "basho" | "complete";
+  | "farewell" | "returnTravel" | "quiz";
 
 function ShakespearePortrait({ cheering = false }: { cheering?: boolean }) {
   return (
@@ -58,18 +56,8 @@ function Choice({
   );
 }
 
-export default function App() {
-  return <><ReturnToMainMenu /><Storyline /></>;
-}
-
-function Storyline() {
-  /* ==========================================
-     START NEW LINE: Default screen set to "worksheet"
-     ========================================== */
+export default function App({ onComplete }: { onComplete: () => void }){ 
   const [screen, setScreen] = useState<Screen>("worksheet");
-  /* ==========================================
-     STOP NEW LINE: Default screen set to "worksheet"
-     ========================================== */
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -142,7 +130,7 @@ function Storyline() {
       /* ==========================================
          START NEW LINE: Route to returnTravel instead of complete
          ========================================== */
-      setScreen("poe");
+      onComplete();
       /* ==========================================
          STOP NEW LINE: Route to returnTravel instead of complete
          ========================================== */
@@ -152,39 +140,9 @@ function Storyline() {
     setSelectedAnswer(null);
   }
 
-  function restartGame() {
-    setQuizQuestions(shuffleQuiz(questions));
-    setQuestionIndex(0);
-    setSelectedAnswer(null);
-    setScore(0);
-    /* ==========================================
-     START NEW LINE: Reset game back to worksheet
-     ========================================== */
-    setScreen("worksheet");
-    /* ==========================================
-     STOP NEW LINE: Reset game back to worksheet
-     ========================================== */
-  }
-
-  if (screen === "poe") {
-    return (
-      <div className="poe-shell">
-        <PoeGame onComplete={() => setScreen("basho")} />
-      </div>
-    );
-  }
-
-  if (screen === "basho") {
-    return (
-      <div className="basho-shell">
-        <BashoGame onComplete={() => setScreen("complete")} />
-      </div>
-    );
-  }
-
-  return (
+   return (
    <div className="shakespeare-shell">
-    <main className={`game ${result ? "show-result" : ""} ${screen === "farewell" || screen === "quiz" || screen === "complete" ? "wormhole-scene" : ""} ${prologue ? "prologue-scene" : ""}`}>
+    <main className={`game ${result ? "show-result" : ""} ${screen === "farewell" || screen === "quiz" ? "wormhole-scene" : ""} ${prologue ? "prologue-scene" : ""}`}>
       {/* ==========================================
          START NEW: Conditional header wrapper
          ========================================== */}
@@ -192,7 +150,7 @@ function Storyline() {
         <>
           <div className="game-title">
             <span>THE PLAYWRIGHT&rsquo;S GAMBIT</span>
-            <small>{screen === "quiz" || screen === "complete" ? "Present day" : "London, 1588"}</small>
+            <small>{screen === "quiz" ? "Present day" : "London, 1588"}</small>
           </div>
           <ShakespearePortrait cheering={success} />
         </>
@@ -276,7 +234,7 @@ function Storyline() {
             <p className="scene-label">Question 20 complete &middot; The clock begins to shake</p>
             <h1 id="return-heading">The clock explodes again.</h1>
             <p>A glowing wormhole opens as the room dissolves into golden light. You hold tight to everything you learned and travel back to the present.</p>
-            <button className="scene-button light-button" onClick={() => setScreen("complete")}>Travel home</button>
+            <button className="scene-button light-button" onClick={onComplete}>Travel home</button>
           </div>
         </section>
       )}
@@ -414,31 +372,7 @@ function Storyline() {
             )}
           </section>
         </div>
-      )}
-
-      {screen === "complete" && (
-        <div className="quiz-layer" role="dialog" aria-modal="true" aria-labelledby="result-heading">
-          <section className="quiz-box final-box">
-            <p className="speaker">BACK IN THE PRESENT</p>
-            <h2 id="result-heading">Worksheet complete!</h2>
-            {/* ==========================================
-               START NEW: Completed worksheet paper card
-               ========================================== */}
-            <div className="worksheet-paper completed-paper">
-              <div className="paper-heading"><span>LITERATURE</span><strong>Authors &amp; Eras</strong></div>
-              <div className="worksheet-row worksheet-labels"><b>ERA</b><b>AUTHOR</b></div>
-              <div className="worksheet-row"><span>16th Century</span><span>Shakespeare</span></div>
-              <div className="worksheet-row"><span>19th Century</span><span>Edgar Allan Poe</span></div>
-              <div className="worksheet-row"><span>17th Century</span><span>Matsuo Basho</span></div>
-            </div>
-            {/* ==========================================
-               STOP NEW: Completed worksheet paper card
-               ========================================== */}
-            <p>You traveled through time and learned so much about these authors, their eras, and the stories they shared with the world.</p> 
-	    <button className="final-button" onClick={restartGame}>Play again</button>
-          </section>
-        </div>
-      )}
+      )} 
     </main>
    </div>
   );
