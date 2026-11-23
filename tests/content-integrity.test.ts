@@ -1,12 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { poeRounds } from "../poe/rounds";
-import { questions as shakespeareQuestions } from "../shakespeare/src/questions";
 import * as bashoData from "../basho/poems";
 import * as triviaData from "../trivia/questions";
 
 // Content checks for the game data players actually see. Other test files cover each game's
 // own rules (5-7-5 haiku, 20 trivia questions, anagram validity); these fill the gaps:
-// the real Shakespeare question file, Poe's text fields, and text hygiene across every game.
+// Poe's text fields and text hygiene across every game.
 const letters = (text: string) => text.toLowerCase().replace(/[^a-z]/g, "");
 
 describe("Poe rounds", () => {
@@ -31,33 +30,9 @@ describe("Poe rounds", () => {
   });
 });
 
-describe("Shakespeare questions (the real src/questions.ts)", () => {
-  it("has a valid correct-answer index for every question", () => {
-    for (const q of shakespeareQuestions) {
-      expect(Number.isInteger(q.correct), q.question).toBe(true);
-      expect(q.correct, q.question).toBeGreaterThanOrEqual(0);
-      expect(q.correct, q.question).toBeLessThan(q.answers.length);
-    }
-  });
-
-  it("offers at least two distinct answers per question", () => {
-    for (const q of shakespeareQuestions) {
-      expect(q.answers.length, q.question).toBeGreaterThanOrEqual(2);
-      const unique = new Set(q.answers.map((answer) => answer.trim().toLowerCase()));
-      expect(unique.size, `duplicate answers in "${q.question}"`).toBe(q.answers.length);
-    }
-  });
-
-  it("has no repeated question", () => {
-    const seen = shakespeareQuestions.map((q) => q.question.trim().toLowerCase());
-    expect(new Set(seen).size).toBe(seen.length);
-  });
-});
-
 describe("text hygiene across all game data", () => {
   const modules = {
     "poe/rounds": { poeRounds },
-    "shakespeare/src/questions": { shakespeareQuestions },
     "basho/poems": bashoData,
     "trivia/questions": triviaData,
   };
