@@ -1,30 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { createElement } from 'react';
 import App from '../shakespeare/src/App';
 import { within } from '@testing-library/react'; // Add 'within' to your existing testing-library import
-
-// Mock external author apps so multi-app navigation can be tested safely
-vi.mock('../edgar-allan-poe/src/App', () => ({
-  default: ({ onComplete }: { onComplete: () => void }) =>
-    createElement(
-      'main',
-      { 'aria-label': 'Edgar Allan Poe game' },
-      createElement('h1', null, 'Edgar Allan Poe'),
-      createElement('button', { onClick: onComplete }, 'Continue to Matsuo Basho'),
-    ),
-}));
-
-vi.mock('../matsuo-basho/src/App', () => ({
-  default: ({ onComplete }: { onComplete: () => void }) =>
-    createElement(
-      'main',
-      { 'aria-label': 'Matsuo Basho game' },
-      createElement('h1', null, 'Matsuo Basho'),
-      createElement('button', { onClick: onComplete }, 'Return to the present'),
-    ),
-}));
 
 const click = (name: RegExp) =>
   fireEvent.click(screen.getByRole('button', { name }));
@@ -64,7 +43,7 @@ describe('The Playwright’s Gambit - Prologue & Navigation Flow', () => {
   
   // 1. Initial State / Worksheet Prologue Test
   it('renders the modern classroom worksheet prologue on initial load', () => {
-    render(createElement(App));
+    render(createElement(App, { onComplete: () => {} }));
 
     // Verify classroom header and copy
     expect(screen.getByText(/PRESENT DAY/i)).toBeInTheDocument();
@@ -78,7 +57,7 @@ describe('The Playwright’s Gambit - Prologue & Navigation Flow', () => {
 
   // 2. Time Travel & Portal Transition Tests
   it('transitions from worksheet prologue through time travel and home scene', () => {
-    render(createElement(App));
+    render(createElement(App, { onComplete: () => {} }));
 
     // Click start time travel
     const startButton = screen.getByRole('button', { name: /Start time travel/i });
@@ -107,7 +86,7 @@ describe('The Playwright’s Gambit - Prologue & Navigation Flow', () => {
 
   // 3. Edge Case: Core Gameplay Transition
   it('switches from prologue into the core historical gameplay loop when starting the story', () => {
-    render(createElement(App));
+    render(createElement(App, { onComplete: () => {} }));
 
     // Navigate through prologue quickly
     fireEvent.click(screen.getByRole('button', { name: /Start time travel/i }));
@@ -120,10 +99,11 @@ describe('The Playwright’s Gambit - Prologue & Navigation Flow', () => {
     // Verify that historical gameplay screen ("history") is active
     expect(screen.getByText(/London, 1588/i)).toBeInTheDocument();
   });
-
-  // 4. Full Journey: Shakespeare -> Poe -> Basho -> Completion (Integration Test)
-  it('connects Shakespeare to Poe, Basho, and the completed worksheet', () => {
-    render(createElement(App));
+  
+    // 4. Finishing the quiz hands control back to the menu
+  it('calls onComplete after the last quiz question', () => {
+    const onComplete = vi.fn();
+    render(createElement(App, { onComplete }));
     goToQuiz();
 
     for (let question = 1; question < 20; question += 1) {
@@ -131,29 +111,9 @@ describe('The Playwright’s Gambit - Prologue & Navigation Flow', () => {
     }
 
     expect(screen.getByText(/QUESTION 20 OF 20/i)).toBeInTheDocument();
-    expect(
-      screen.queryByRole('main', { name: /Edgar Allan Poe game/i }),
-    ).not.toBeInTheDocument();
+    expect(onComplete).not.toHaveBeenCalled();
 
     answerQuestion(true);
-    expect(
-      screen.getByRole('main', { name: /Edgar Allan Poe game/i }),
-    ).toBeInTheDocument();
-
-    click(/Continue to Matsuo Basho/i);
-    expect(
-      screen.getByRole('main', { name: /Matsuo Basho game/i }),
-    ).toBeInTheDocument();
-
-    click(/Return to the present/i);
-    expect(   
-      screen.getByRole('heading', { name: /Worksheet complete/i }),
-    ).toBeInTheDocument();
-
-    click(/Play again/i);
-    expect(
-      screen.getByRole('button', { name: /Start time travel/i }),
-    ).toBeInTheDocument();
-  });
-
+    expect(onComplete).toHaveBeenCalledTimes(1);
+  }); 
 });
