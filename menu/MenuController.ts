@@ -1,11 +1,11 @@
 import { MenuModel, type MenuItem } from "./MenuModel";
-import { MenuView } from "./MenuView";
-import { absorbFinished, allMet, resetProgress, introSeen, markIntroSeen } from "./progress";
+import type { MenuView } from "./MenuView";
+import { absorbFinished, allMet, getMet, resetProgress, introSeen, markIntroSeen } from "./progress";
 import { destinations } from "./destinations";
 import { timeTravelIntroCards } from "../intro/introCards";
 
 export class MenuController {
-    // only these three destinations trigger the intro (not destinations.iambic)
+    // Only these three destinations trigger the intro (not destinations.iambic)
     private readonly authorHrefs: string[] = [
         destinations.basho,
         destinations.poe,
@@ -35,28 +35,50 @@ export class MenuController {
 
     private render(): void {
         const { screen, items, titles } = this.model;
-        const placeholder = screen === "journal" ? "Coming soon" : undefined;
-        this.view.render(titles[screen], items[screen], (item) => this.select(item), placeholder);
+        const met = getMet();
+
+        if (screen === "journal") {
+            const back = items.journal.find((item) => item.label === "Back")!;
+            this.view.renderJournal(titles.journal, this.model.journalPage(met), {
+                onPrev: () => this.turnPage(-1),
+                onNext: () => this.turnPage(1),
+                onBack: () => this.select(back),
+            });
+            return;
+        }
+
+        // The worksheet only appears on the story picker, next to the author buttons
+        const worksheet = screen === "play" ? this.model.worksheet(met) : undefined;
+        this.view.render(titles[screen], items[screen], (item) => this.select(item), worksheet);
+    }
+
+    private turnPage(step: -1 | 1): void {
+        if (this.model.turnJournalPage(step)) {
+            this.render();
+        }
     }
 
     private select(item: MenuItem): void {
         if (item.href) {
-        // on the first author click, play the intro cards, then navigate
-        if (this.authorHrefs.includes(item.href) && !introSeen()) {
-            const href = item.href;
-            this.view.renderCards(timeTravelIntroCards, () => {
-                markIntroSeen();
-                window.location.href = href;
-            });
+            // On the first author click, play the intro cards, then navigate
+            if (this.authorHrefs.includes(item.href) && !introSeen()) {
+                const href = item.href;
+                this.view.renderCards(timeTravelIntroCards, () => {
+                    markIntroSeen();
+                    window.location.href = href;
+                });
+                return;
+            }
+            window.location.href = item.href;
             return;
         }
-        window.location.href = item.href;
-        return;
-        }
         if (item.screen) {
-        this.model.screen = item.screen;
-        history.replaceState(null, "", item.screen === "play" ? "#play" : location.pathname);
-        this.render();
+            if (item.screen === "journal") {
+                this.model.openJournal(getMet());
+            }
+            this.model.screen = item.screen;
+            history.replaceState(null, "", item.screen === "play" ? "#play" : location.pathname);
+            this.render();
         }
     }
 }

@@ -8,6 +8,9 @@ export type BashoAdvanceResult = "continue" | "won" | "lost";
 
 // Everything the view needs to draw one round
 export interface BashoRoundInfo {
+    poems: BashoPoem[];          // Every poem, for the journey list beside the round
+    poemIdx: number;             // Which of them is being written now
+    completedPoems: number[];    // Indexes of the finished poems
     poem: BashoPoem;
     line: BashoLine;
     lineIdx: number;
@@ -108,6 +111,9 @@ export class BashoModel {
 
     getRoundInfo(): BashoRoundInfo {
         return {
+            poems: this.poems,
+            poemIdx: this.poemIdx,
+            completedPoems: this.getCompletedPoems(),
             poem: this.getCurrentPoem(),
             line: this.getCurrentLine(),
             lineIdx: this.lineIdx,

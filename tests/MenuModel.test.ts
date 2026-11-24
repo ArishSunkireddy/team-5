@@ -13,33 +13,34 @@ describe("MenuModel", () => {
     describe("main screen", () => {
         const model = new MenuModel();
 
-        it("offers Play, Minigames, and Journal in that order", () => {
-            expect(labels(model.items.main)).toEqual(["Play", "Minigames", "Journal"]);
+        it("offers Play and Journal in that order", () => {
+            expect(labels(model.items.main)).toEqual(["Play", "Journal"]);
         });
 
         it("sends Play to the play screen", () => {
             expect(model.items.main[0].screen).toBe("play");
         });
 
-        it("sends Minigames to the iambic pentameter game", () => {
-            expect(model.items.main[1].href).toBe(destinations.iambic);
-        });
-
         it("sends Journal to the journal screen", () => {
-            expect(model.items.main[2].screen).toBe("journal");
+            expect(model.items.main[1].screen).toBe("journal");
         });
     });
 
     describe("play screen", () => {
         const model = new MenuModel();
 
-        it("offers Bashō, Poe, Shakespeare, then Back", () => {
+        it("offers Basho, Poe, Shakespeare, Minigames, then Back", () => {
             expect(labels(model.items.play)).toEqual([
-                "Matsuo Bashō",
+                "Matsuo Basho",
                 "Edgar Allan Poe",
                 "Shakespeare",
+                "Minigames",
                 "Back",
             ]);
+        });
+
+        it("sends Minigames to the iambic pentameter game", () => {
+            expect(model.items.play[3].href).toBe(destinations.iambic);
         });
 
         it("links each story to its own game", () => {
@@ -51,7 +52,7 @@ describe("MenuModel", () => {
     });
 
     describe("journal screen", () => {
-        it("only has a Back button for now", () => {
+        it("has a Back button (its pages are drawn separately)", () => {
             const model = new MenuModel();
             expect(labels(model.items.journal)).toEqual(["Back"]);
         });
