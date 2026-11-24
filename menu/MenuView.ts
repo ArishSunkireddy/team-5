@@ -1,5 +1,6 @@
 import Konva from "konva";
 import type { MenuItem } from "./MenuModel";
+import type { StoryCard } from "../shakespeare-mvc/story";
 
 // Styled to match BashoView / PoeView: full-window stage, dark background, blue buttons
 export class MenuView {
@@ -103,6 +104,53 @@ export class MenuView {
 
     this.layer.draw();
   }
+
+  renderCards(cards: StoryCard[], onDone: () => void): void {
+  let i = 0;
+  const show = () => {
+    const card = cards[i];
+    this.layer.destroyChildren();
+    this.stage.container().style.cursor = "default";
+    const width = this.stage.width();
+    const height = this.stage.height();
+    const textWidth = width * 0.76;
+    let y = height * 0.12;
+
+    this.layer.add(new Konva.Rect({ x: 0, y: 0, width, height, fill: "#18181b" }));
+
+    const addText = (text: string, size: number, fill: string) => {
+      if (text === "") return;
+      const node = new Konva.Text({
+        x: 60, y, width: textWidth, text,
+        fontSize: size, lineHeight: 1.4, fill, align: "left",
+      });
+      this.layer.add(node);
+      y += node.height() + 18;
+    };
+
+    addText(card.label, 16, "#a1a1aa");
+    addText(card.title, 32, "#ffffff");
+    addText(card.text, 20, "#e2e8f0");
+
+    const group = new Konva.Group({ x: 60, y: y + 10 });
+    const background = new Konva.Rect({ width: textWidth, height: 52, fill: "#3b82f6", cornerRadius: 10 });
+    const label = new Konva.Text({
+      width: textWidth, height: 52, text: card.buttonLabel,
+      fontSize: 18, fill: "#ffffff", align: "center", verticalAlign: "middle",
+    });
+    group.add(background, label);
+    group.on("mouseenter", () => { this.stage.container().style.cursor = "pointer"; background.fill("#2563eb"); this.layer.draw(); });
+    group.on("mouseleave", () => { this.stage.container().style.cursor = "default"; background.fill("#3b82f6"); this.layer.draw(); });
+    group.on("click tap", () => {
+      this.stage.container().style.cursor = "default";
+      if (++i < cards.length) show();
+      else onDone();
+    });
+    this.layer.add(group);
+    this.layer.draw();
+  };
+  show();
+}
 
   renderEnd(onPlayAgain: () => void): void {
   this.layer.destroyChildren();

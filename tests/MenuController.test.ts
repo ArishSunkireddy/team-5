@@ -3,6 +3,7 @@ import { MenuController } from "../menu/MenuController";
 import { MenuModel, type MenuItem } from "../menu/MenuModel";
 import type { MenuView } from "../menu/MenuView";
 import { destinations } from "../menu/destinations";
+import { timeTravelIntroCards } from "../intro/introCards";
 
 // The real view needs Konva and a canvas, so the controller is tested with a fake one
 vi.mock("../../menu/MenuView", () => ({ MenuView: class {} }));
@@ -12,18 +13,31 @@ type RenderArgs = [string, MenuItem[], OnSelect, string | undefined];
 
 let fakeLocation: { hash: string; pathname: string; href: string };
 let replaceState: ReturnType<typeof vi.fn>;
-let render: ReturnType<typeof vi.fn>;
+let render: ReturnType<typeof vi.fn>; 
+let renderCards: ReturnType<typeof vi.fn>;
 
 // Builds a controller with a fake view and fake browser globals, then starts it
-function setup(hash: string = ""): void {
+function setup(hash: string = "", introFinishesAtOnce: boolean = true): void {
     fakeLocation = { hash, pathname: "/", href: "" };
     replaceState = vi.fn();
     render = vi.fn();
+
+    renderCards = vi.fn((_cards: unknown, onDone: () => void) => {
+        if (introFinishesAtOnce) onDone();
+    });
+
+    const store = new Map<string, string>();
+    vi.stubGlobal("sessionStorage", {
+        getItem: (key: string) => store.get(key) ?? null,
+        setItem: (key: string, value: string) => { store.set(key, value); },
+        removeItem: (key: string) => { store.delete(key); },
+        clear: () => store.clear(),
+    });
     vi.stubGlobal("location", fakeLocation);
     vi.stubGlobal("window", { location: fakeLocation });
     vi.stubGlobal("history", { replaceState });
 
-    const controller = new MenuController(new MenuModel(), { render } as unknown as MenuView);
+    const controller = new MenuController(new MenuModel(), { render, renderCards } as unknown as MenuView);
     controller.start();
 }
 
@@ -150,5 +164,37 @@ describe("MenuController", () => {
             click("Journal");
             expect(fakeLocation.href).toBe("");
         });
-    });
+        it("plays the intro before the first author and navigates only when it finishes", () => {
+   	    setup("", false); // intro stays open until we finish it
+   	    click("Play");
+    	    click("Shakespeare");
+            expect(renderCards).toHaveBeenCalledTimes(1);
+            expect(renderCards.mock.calls[0][0]).toBe(timeTravelIntroCards);
+            expect(fakeLocation.href).toBe("");
+
+            const onDone = renderCards.mock.calls[0][1] as () => void;
+            onDone();
+            expect(fakeLocation.href).toBe(destinations.shakespeare);
+        });
+
+        it("skips the intro for later authors", () => {
+            setup();
+            click("Play");
+            click("Matsuo Bashō");
+            click("Edgar Allan Poe");
+            expect(renderCards).toHaveBeenCalledTimes(1);
+            expect(fakeLocation.href).toBe(destinations.poe);
+        });
+
+        it("never plays the intro for Minigames, and doesn't use it up", () => {
+            setup();
+            click("Minigames");
+            expect(renderCards).not.toHaveBeenCalled();
+            expect(fakeLocation.href).toBe(destinations.iambic);
+
+            click("Play");
+            click("Shakespeare");
+            expect(renderCards).toHaveBeenCalledTimes(1);
+        });
+     });
 });

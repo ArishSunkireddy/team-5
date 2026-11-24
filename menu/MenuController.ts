@@ -1,8 +1,17 @@
 import { MenuModel, type MenuItem } from "./MenuModel";
 import { MenuView } from "./MenuView";
-import { absorbFinished, allMet, resetProgress } from "./progress";
+import { absorbFinished, allMet, resetProgress, introSeen, markIntroSeen } from "./progress";
+import { destinations } from "./destinations";
+import { timeTravelIntroCards } from "../intro/introCards";
 
 export class MenuController {
+    // only these three destinations trigger the intro (not destinations.iambic)
+    private readonly authorHrefs: string[] = [
+        destinations.basho,
+        destinations.poe,
+        destinations.shakespeare,
+    ];
+
     constructor(private model: MenuModel, private view: MenuView) {}
 
     start(): void {
@@ -32,6 +41,15 @@ export class MenuController {
 
     private select(item: MenuItem): void {
         if (item.href) {
+        // on the first author click, play the intro cards, then navigate
+        if (this.authorHrefs.includes(item.href) && !introSeen()) {
+            const href = item.href;
+            this.view.renderCards(timeTravelIntroCards, () => {
+                markIntroSeen();
+                window.location.href = href;
+            });
+            return;
+        }
         window.location.href = item.href;
         return;
         }

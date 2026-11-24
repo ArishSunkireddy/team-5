@@ -3,6 +3,7 @@ import { menuUrl } from "./destinations";
 export const ALL_AUTHORS = ["shakespeare", "poe", "basho"] as const;
 export type Author = (typeof ALL_AUTHORS)[number];
 const KEY = "authorsMet";
+const INTRO_KEY = "introSeen";
 
 export function getMet(): Author[] {
   try { return JSON.parse(localStorage.getItem(KEY) ?? "[]"); }
@@ -15,6 +16,18 @@ export function allMet(): boolean {
 
 export function resetProgress(): void {
   localStorage.removeItem(KEY);
+  sessionStorage.removeItem(INTRO_KEY);
+}
+
+// Has the player already seen the time-travel intro this run?
+export function introSeen(): boolean {
+  try { return sessionStorage.getItem(INTRO_KEY) === "1"; }
+  catch { return false; }
+}
+
+export function markIntroSeen(): void {
+  try { sessionStorage.setItem(INTRO_KEY, "1"); }
+  catch { /* storage unavailable: intro will just replay */ }
 }
 
 // MENU SIDE: call once on load. Records the author who just finished.
