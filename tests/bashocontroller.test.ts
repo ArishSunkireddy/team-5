@@ -101,13 +101,13 @@ describe("BashoModel", () => {
         model = new BashoModel(samplePoems, 3);
     });
 
-    it("starts on round 1 of 4 with full lives and the full 16 seconds", () => {
+    it("starts on round 1 of 4 with full lives and the full 22 seconds", () => {
         expect(model.getCurrentPoem().title).toBe("Poem One");
         expect(model.getRound()).toBe(1);
         expect(model.getTotalRounds()).toBe(4);
         expect(model.getLives()).toBe(3);
-        expect(model.getTimeLimit()).toBe(16);
-        expect(model.getTimeLeft()).toBe(16);
+        expect(model.getTimeLimit()).toBe(22);
+        expect(model.getTimeLeft()).toBe(22);
     });
 
     it("counts nine rounds for the real haiku", () => {
@@ -130,33 +130,33 @@ describe("BashoModel", () => {
         expect(model.getCurrentLine().correct).toBe("Line 1B");
     });
 
-    it("shortens the time limit by 0.7s per attempt and 1.5s per lost life", () => {
+    it("shortens the time limit by 0.5s per attempt and 1.5s per lost life", () => {
         answerCorrectly();
-        expect(model.getTimeLimit()).toBeCloseTo(15.3);
-        expect(model.getTimeLeft()).toBeCloseTo(15.3);
+        expect(model.getTimeLimit()).toBeCloseTo(21.5);
+        expect(model.getTimeLeft()).toBeCloseTo(21.5);
 
         answerWrong();
         // 2 attempts and 1 lost life
-        expect(model.getTimeLimit()).toBeCloseTo(16 - 1.4 - 1.5);
+        expect(model.getTimeLimit()).toBeCloseTo(22 - 1 - 1.25);
     });
 
-    it("never lets the time limit drop below the 6 second floor", () => {
+    it("never lets the time limit drop below the 8 second floor", () => {
         const patient = new BashoModel(samplePoems, 10);
         for (let i = 0; i < 8; i++) {
             patient.loseLife();
             patient.advance();
         }
-        expect(patient.getTimeLimit()).toBe(6);
-        expect(patient.getTimeLeft()).toBe(6);
+        expect(patient.getTimeLimit()).toBe(8);
+        expect(patient.getTimeLeft()).toBe(8);
     });
 
-    it("runs out of time after about 16 seconds of ticks", () => {
+    it("runs out of time after about 22 seconds of ticks", () => {
         let ticks = 0;
         while (!model.tick()) {
             ticks++;
         }
         expect(ticks).toBeGreaterThan(150);
-        expect(ticks).toBeLessThan(170);
+        expect(ticks).toBeLessThan(220);
         expect(model.getTimeLeft()).toBe(0);
     });
 
@@ -251,7 +251,7 @@ describe("BashoModel", () => {
         expect(model.getRound()).toBe(1);
         expect(model.getCompletedPoems()).toEqual([]);
         expect(model.getLockedLines()).toEqual([]);
-        expect(model.getTimeLimit()).toBe(16);
+        expect(model.getTimeLimit()).toBe(22);
         expect(model.getCurrentPoem().title).toBe("Poem One");
     });
 
@@ -260,7 +260,7 @@ describe("BashoModel", () => {
         expect(info.poem.title).toBe("Poem One");
         expect(info.line.syllables).toBe(5);
         expect(info.options).toEqual(["Line 1A", "Other 1A", "Wrong 1A"]);
-        expect(info).toMatchObject({ lineIdx: 0, round: 1, totalRounds: 4, lives: 3, maxLives: 3, timeLimit: 16 });
+        expect(info).toMatchObject({ lineIdx: 0, round: 1, totalRounds: 4, lives: 3, maxLives: 3, timeLimit: 22 });
     });
 });
 
@@ -335,8 +335,8 @@ describe ("BashoController", () => {
         vi.advanceTimersByTime(1000);
         expect(mockView.updateTimer).toHaveBeenCalledTimes(10);
         const [timeLeft, timeLimit] = mockView.updateTimer.mock.lastCall!;
-        expect(timeLeft).toBeCloseTo(15);
-        expect(timeLimit).toBe(16);
+        expect(timeLeft).toBeCloseTo(21);
+        expect(timeLimit).toBe(22);
     });
 
     it("locks the line, highlights green, and moves on 650ms after a correct choice", () => {
@@ -396,7 +396,7 @@ describe ("BashoController", () => {
     it("costs a life when the time runs out", () => {
         controller.start();
         pressButton();
-        vi.advanceTimersByTime(16200);
+        vi.advanceTimersByTime(22200);
 
         expect(mockView.showFeedback).toHaveBeenCalledWith(false);
         expect(mockView.highlight).not.toHaveBeenCalled();
