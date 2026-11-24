@@ -37,7 +37,7 @@ export class BashoModel {
     private lastResult: "correct" | "wrong" | null = null;
 
     // Initializes the haiku rounds, starting lives, and the time (in seconds) allowed per line
-    constructor(poems: BashoPoem[] = bashoPoems, startingLives: number = 3, initialTime: number = 16, minTime: number = 6) {
+    constructor(poems: BashoPoem[] = bashoPoems, startingLives: number = 3, initialTime: number = 22, minTime: number = 6) {
         this.poems = poems;
         this.startingLives = startingLives;
         this.initialTime = initialTime;
