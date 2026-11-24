@@ -97,7 +97,7 @@ export class BashoModel {
 
     // Seconds allowed for the current line. Every attempt and every lost life makes it shorter, down to a floor
     getTimeLimit(): number {
-        const limit = this.initialTime - this.attempts * 0.7 - (this.startingLives - this.lives) * 1.5;
+        const limit = this.initialTime - this.attempts * 0.5 - (this.startingLives - this.lives) * 1.25;
         return Math.max(this.minTime, limit);
     }
 
