@@ -194,7 +194,7 @@ export class MenuView {
     show();
   }
 
-  renderEnd(onPlayAgain: () => void): void {
+  renderEnd(onPlayAgain: () => void, onIambic: () => void): void {
   this.clear();
   const width = this.stage.width();
   const height = this.stage.height();
@@ -243,8 +243,9 @@ export class MenuView {
     fontSize: theme.size(18), lineHeight: 1.5, fill: colors.body, align: "center",
   }));
 
-  // Play again button (same look as the menu buttons)
-  this.addButton("Play again", (width - theme.button.size.width) / 2, height * 0.8, theme.button.size.width, onPlayAgain);
+  const buttonWidth = Math.min(theme.button.size.width, (width - 36) / 2);
+  this.addButton("Poetry Builder", width / 2 - buttonWidth - 6, height * 0.8, buttonWidth, onIambic);
+  this.addButton("Play again", width / 2 + 6, height * 0.8, buttonWidth, onPlayAgain);
 
   this.layer.draw();
 }

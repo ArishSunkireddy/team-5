@@ -12,7 +12,8 @@ type OnSelect = (item: MenuItem) => void;
 type RenderArgs = [string, MenuItem[], OnSelect, WorksheetRow[] | undefined];
 type JournalArgs = [string, JournalPage, JournalHandlers];
 
-let fakeLocation: { hash: string; pathname: string; href: string };
+let renderEnd: ReturnType<typeof vi.fn>;
+let fakeLocation: { search: string; hash: string; pathname: string; href: string };
 let replaceState: ReturnType<typeof vi.fn>;
 let render: ReturnType<typeof vi.fn>;
 let renderJournal: ReturnType<typeof vi.fn>;
@@ -21,8 +22,9 @@ let renderCards: ReturnType<typeof vi.fn>;
 // Builds a controller with a fake view and fake browser globals, then starts it.
 // `met` is the list of finished authors already saved in localStorage.
 // With introFinishesAtOnce, the fake intro "plays" instantly so author clicks navigate straight away.
-function setup(hash: string = "", met: string[] = [], introFinishesAtOnce: boolean = true): void {
-    fakeLocation = { hash, pathname: "/", href: "" };
+function setup(hash: string = "", met: string[] = [], introFinishesAtOnce: boolean = true, search = ""): void {
+    renderEnd = vi.fn();
+    fakeLocation = { search, hash, pathname: "/", href: "" };
     replaceState = vi.fn();
     render = vi.fn();
     renderJournal = vi.fn();
@@ -44,7 +46,7 @@ function setup(hash: string = "", met: string[] = [], introFinishesAtOnce: boole
     vi.stubGlobal("window", { location: fakeLocation });
     vi.stubGlobal("history", { replaceState });
 
-    const controller = new MenuController(new MenuModel(), { render, renderJournal, renderCards } as unknown as MenuView);
+    const controller = new MenuController(new MenuModel(), { render, renderJournal, renderCards, renderEnd } as unknown as MenuView);
     controller.start();
 }
 
@@ -260,5 +262,31 @@ describe("MenuController", () => {
             click("Shakespeare");
             expect(renderCards).toHaveBeenCalledTimes(1);
         });
+    });
+});
+
+describe("completed worksheet", () => {
+    it("launches Poetry Builder with worksheet origin and preserves completion on return", () => {
+        setup("#play", ["basho", "poe"], true, "?finished=shakespeare");
+        const completed = localStorage.getItem("authorsMet");
+        renderEnd.mock.lastCall![1]();
+        expect(fakeLocation.href).toBe(destinations.iambic + "?from=worksheet");
+        setup("#worksheet", JSON.parse(completed!));
+        expect(renderEnd).toHaveBeenCalledTimes(1);
+        expect(localStorage.getItem("authorsMet")).toBe(completed);
+    });
+
+    it("can finish the worksheet without launching poetry", () => {
+        setup("#play", ["basho", "poe"], true, "?finished=shakespeare");
+        renderEnd.mock.lastCall![0]();
+        expect(fakeLocation.href).toBe("");
+        expect(lastRender()[0]).toBe("Out of Print");
+        expect(localStorage.getItem("authorsMet")).toBeNull();
+    });
+
+    it("requires completed author progress to reopen the worksheet", () => {
+        setup("#worksheet");
+        expect(renderEnd).not.toHaveBeenCalled();
+        expect(lastRender()[0]).toBe("Out of Print");
     });
 });

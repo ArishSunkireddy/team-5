@@ -17,13 +17,16 @@ export class MenuController {
     start(): void {
         const finished = absorbFinished();
 
-        // Someone just finished AND all three are now met -> that was the last author
-        if (finished && allMet()) {
+        // The last author unlocks the worksheet. Poetry can return here without recording another finish.
+        if ((finished || location.hash === "#worksheet") && allMet()) {
+            history.replaceState(null, "", "#worksheet");
             this.view.renderEnd(() => {
                 resetProgress();
                 this.model.screen = "main";
                 history.replaceState(null, "", location.pathname);
                 this.render();
+            }, () => {
+                window.location.href = destinations.iambic + "?from=worksheet";
             });
             return;
         }
