@@ -36,7 +36,7 @@ export interface StoryRound {
     choices: StoryChoice[];
 }
 
-// Shakespeare only: meeting him, and the title
+// Shakespeare only: meeting him, and the title (the present-day opening now plays in the menu: intro/introCards.ts)
 export const prologueCards: StoryCard[] = [
     {
         label: "LONDON · THE 16TH CENTURY",

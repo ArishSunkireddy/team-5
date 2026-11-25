@@ -120,37 +120,37 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
 
     basho: [
         {
-            question: "During which period of Japanese history did Matsuo Bashō live?",
+            question: "During which period of Japanese history did Matsuo Basho live?",
             options: ["Heian period", "Edo period", "Meiji period", "Kamakura period"],
             answer: "Edo period",
         },
         {
-            question: "What poetic form is Bashō most closely associated with?",
+            question: "What poetic form is Basho most closely associated with?",
             options: ["Sonnet", "Epic", "Haiku", "Ode"],
             answer: "Haiku",
         },
         {
-            question: "What was Bashō's birth name?",
+            question: "What was Basho's birth name?",
             options: ["Tokugawa Ieyasu", "Yosa Buson", "Kobayashi Issa", "Matsuo Kinsaku"],
             answer: "Matsuo Kinsaku",
         },
         {
-            question: "In which year was Bashō born?",
+            question: "In which year was Basho born?",
             options: ["1644", "1544", "1744", "1844"],
             answer: "1644",
         },
         {
-            question: "The name 'Bashō' refers to which plant?",
+            question: "The name 'Basho' refers to which plant?",
             options: ["Cherry tree", "Bamboo", "Banana plant", "Plum tree"],
             answer: "Banana plant",
         },
         {
-            question: "Which famous travel diary was written by Bashō?",
+            question: "Which famous travel diary was written by Basho?",
             options: ["The Tale of Genji", "The Narrow Road to the Deep North", "The Pillow Book", "Essays in Idleness"],
             answer: "The Narrow Road to the Deep North",
         },
         {
-            question: "What creature jumps into the old pond in Bashō's best-known poem?",
+            question: "What creature jumps into the old pond in Basho's best-known poem?",
             options: ["A crane", "A carp", "A cicada", "A frog"],
             answer: "A frog",
         },
@@ -170,12 +170,12 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
             answer: "5-7-5",
         },
         {
-            question: "Bashō's poetry often draws its imagery from what source?",
+            question: "Basho's poetry often draws its imagery from what source?",
             options: ["Courtroom debates", "Military strategy", "Trade accounts", "Nature and the seasons"],
             answer: "Nature and the seasons",
         },
         {
-            question: "Before becoming a renowned poet, Bashō served in what role?",
+            question: "Before becoming a renowned poet, Basho served in what role?",
             options: ["A Buddhist abbot", "A samurai household servant", "An imperial painter", "A shipbuilder"],
             answer: "A samurai household servant",
         },
@@ -185,17 +185,17 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
             answer: "Kigo",
         },
         {
-            question: "What idea did Bashō seek by combining everyday scenes with spiritual depth?",
+            question: "What idea did Basho seek by combining everyday scenes with spiritual depth?",
             options: ["Simplicity and insight", "Luxury and spectacle", "Political authority", "Strict realism alone"],
             answer: "Simplicity and insight",
         },
         {
-            question: "Bashō traveled mainly to do what?",
+            question: "Basho traveled mainly to do what?",
             options: ["Command an army", "Collect taxes", "Study foreign law", "Observe, reflect, and write"],
             answer: "Observe, reflect, and write",
         },
         {
-            question: "In his famous travelogue 'The Narrow Road to the Deep North,' which direction did Matsuo Bashō travel from Edo?",
+            question: "In his famous travelogue 'The Narrow Road to the Deep North,' which direction did Matsuo Basho travel from Edo?",
             options: ["West across the sea", "North into rural Japan", "South to Okinawa", "East to America"],
             answer: "North into rural Japan",
         },
@@ -205,17 +205,17 @@ export const individualTrivia: Record<AuthorID, TriviaQuestion[]> = {
             answer: "Tokyo",
         },
         {
-            question: "In which year did Bashō die?",
+            question: "In which year did Basho die?",
             options: ["1594", "1794", "1894", "1694"],
             answer: "1694",
         },
         {
-            question: "Which quality is central to Bashō's mature poetry?",
+            question: "Which quality is central to Basho's mature poetry?",
             options: ["Attention to fleeting moments", "Elaborate rhyme schemes", "Long heroic narratives", "Comic stage dialogue"],
             answer: "Attention to fleeting moments",
         },
         {
-            question: "Which statement best describes Bashō's legacy?",
+            question: "Which statement best describes Basho's legacy?",
             options: ["He invented Japanese writing", "He founded the shogunate", "He elevated haiku into a profound literary art", "He translated the first Japanese novel"],
             answer: "He elevated haiku into a profound literary art",
         },
@@ -335,8 +335,8 @@ export const TriviaEndings: Record<AuthorID, TriviaEnding> = {
     },
     basho: {
         passingScore: 150,
-        passMessage: "You carried Bashō's lessons through the turning of time. Your knowledge is worthy of the poet's path.",
-        failMessage: "The road to understanding is walked more than once. Return to Bashō's life and poems, then try the trial again.",
+        passMessage: "You carried Basho's lessons through the turning of time. Your knowledge is worthy of the poet's path.",
+        failMessage: "The road to understanding is walked more than once. Return to Basho's life and poems, then try the trial again.",
         passButtonLabel: "Begin a new journey",
         failButtonLabel: "Try the questions again",
     },

@@ -1,0 +1,28 @@
+/* Custom fonts for every game. Imported from menu/fonts.ts, so Vite bundles the
+   font files into each game that calls loadFonts(). Add one @font-face per file,
+   and list each new style in customFonts in menu/theme.ts. */
+
+/* Headings */
+@font-face {
+  font-family: "Helvetica Punk";
+  src: url("./Helvetica_Punk.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+/* Body text: one family, two files. The browser picks the italic file for italic text. */
+@font-face {
+  font-family: "Roman Antique";
+  src: url("./RomanAntique.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Roman Antique";
+  src: url("./RomanAntique-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: block;
+}

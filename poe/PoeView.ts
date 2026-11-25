@@ -1,245 +1,259 @@
 import Konva from "konva";
 import { PoeRound } from "./rounds";
+import { theme } from "../menu/theme";
+import {
+    addBackground, fitToWindow, addButton, addDivider, addHeader, addImagePlaceholder, addKicker,
+    addPanel, addShade, addText, pageBox,
+} from "../menu/konvaUi";
+
+const { colors } = theme;
+
+// A bordered label whose box grows with its text, e.g. "ROUND 1 / 5"
+interface Badge {
+    set: (text: string) => void;
+}
 
 export class PoeView {
     private stage: Konva.Stage;
     private layer: Konva.Layer;
+    private size: { width: number; height: number };   // Layout size (see fitToWindow)
     private gameGroup: Konva.Group;
     private revealGroup: Konva.Group;
-    private roundText: Konva.Text;
-    private scoreText: Konva.Text;
+    private pictureGroup: Konva.Group;
+    private roundBadge: Badge;
+    private scoreBadge: Badge;
     private eyebrowText: Konva.Text;
     private scrambleText: Konva.Text;
-    private attemptsText: Konva.Text;
     private inputText: Konva.Text;
+    private placeholderText: Konva.Text;
+    private inputBox: Konva.Rect;
+    private inputGlow: Konva.Rect;
+    private answerLabel: Konva.Text;
+    private submitButton: Konva.Group;
     private historyTexts: Konva.Text[] = [];
+    private historyMarks: Konva.Group[] = [];
+    private blurbText: Konva.Text;
+    private pictureBox = { x: 0, y: 0, width: 0, height: 0 };
     private currentGuess: string = "";
     private inputEnabled: boolean = false;
+    private focused: boolean = false;          // Typing only goes into the box while it is focused
+    private caretOn: boolean = true;
+    private caretTimer: ReturnType<typeof setInterval> | null = null;
+    private clickedInput: boolean = false;     // Set by clicks on the box or Submit, so the stage doesn't blur it
+    private onSubmit: (guess: string) => void;
     private keyHandler: (event: KeyboardEvent) => void;
 
     constructor(onSubmit: (guess: string) => void, containerId: string = "container") {
-        this.stage = new Konva.Stage( {
+        this.onSubmit = onSubmit;
+        this.stage = new Konva.Stage({
             container: containerId,
             width: window.innerWidth,
             height: window.innerHeight,
         });
         this.layer = new Konva.Layer();
         this.stage.add(this.layer);
+        this.size = fitToWindow(this.stage, this.layer);
 
-        // Background color
-        const bg = new Konva.Rect( {
-            x: 0,
-            y: 0,
-            width: this.stage.width(),
-            height: this.stage.height(),
-            fill: "#18181b",
-        });
-        this.layer.add(bg);
-        this.gameGroup = new Konva.Group({ visible: true });
+        const width = this.size.width;
+        const height = this.size.height;
+        addBackground(this.layer, width, height);
+        this.gameGroup = new Konva.Group();
         this.revealGroup = new Konva.Group({ visible: false });
         this.layer.add(this.gameGroup, this.revealGroup);
 
-        // Ex: Round 1 / 5 in top left corner
-        this.roundText = new Konva.Text( {
-            text: "Round 1 / 5",
-            x: 60,
-            y: 40,
-            fontSize: 15,
-            fill: "#a1a1aa",
+        const ruleY = addHeader(this.gameGroup, width, {
+            kicker: "A literary mystery",
+            title: "Edgar Allan Poe",
+            seal: "P",
+            rightTag: "1809–1849",
+            rightText: "19th Century · Baltimore",
         });
-        this.gameGroup.add(this.roundText);
 
-        // Displays mysteries solved in top right corner
-        this.scoreText = new Konva.Text( {
-            text: "Score: 0 / 5",
-            x: this.stage.width() - 180,
-            y: 40,
-            fontSize: 15,
-            fill: "#a1a1aa",
-        });
-        this.gameGroup.add(this.scoreText);
+        // Two columns: the puzzle on the left, the picture and story teaser on the right
+        const { x0, x1, width: contentWidth } = pageBox(width);
+        const top = ruleY + 26;
+        const leftWidth = Math.round(contentWidth * 0.6);
+        const dividerX = x0 + leftWidth + 32;
+        const rightX = dividerX + 32;
+        const rightWidth = x1 - rightX;
+        this.gameGroup.add(new Konva.Line({
+            points: [dividerX, top, dividerX, height - 36], stroke: colors.border, strokeWidth: 1,
+        }));
 
-        // Heading and instructions
-        const headingText = new Konva.Text( {
-            text: "Rearrange the letters.",
-            x: 60,
-            y: 90,
-            width: this.stage.width() - 120,
-            fontSize: 28,
-            fill: "#ffffff",
+        // Round and score badges
+        this.roundBadge = this.makeBadge(x0, top, "left");
+        this.scoreBadge = this.makeBadge(x0 + leftWidth, top, "right");
+        let y = top + 54;
+
+        const prompt = addText(this.gameGroup, "Name the Poe title hidden below", {
+            x: x0, y, width: leftWidth, size: 26, color: colors.text,
         });
-        const promptText = new Konva.Text( {
-            text: "Name the Poe title hidden below. Punctuation and spaces do not matter.",
-            x: 60,
-            y: 135,
-            width: this.stage.width() - 120,
-            fontSize: 16,
-            fill: "#a1a1aa",
+        y += prompt.height() + 4;
+        const instructions = addText(this.gameGroup, "Rearrange the letters. Punctuation and spaces do not matter.", {
+            x: x0, y, width: leftWidth, size: 15, color: colors.muted, italic: true,
         });
-        this.gameGroup.add(headingText, promptText);
+        y += instructions.height() + 18;
 
         // Card holding the hint and the scrambled title
-        const cardBox = new Konva.Rect( {
-            x: 60,
-            y: 180,
-            width: this.stage.width() - 120,
-            height: 120,
-            fill: "#27272a",
-            cornerRadius: 10,
+        const cardHeight = 124;
+        addPanel(this.gameGroup, x0, y, leftWidth, cardHeight, { shadow: false });
+        this.eyebrowText = addKicker(this.gameGroup, "", { x: x0, y: y + 24, width: leftWidth, align: "center" });
+        this.scrambleText = addText(this.gameGroup, "", {
+            x: x0 + 20, y: y + 44, width: leftWidth - 40, height: cardHeight - 56,
+            size: 30, font: "heading", color: colors.text, align: "center", verticalAlign: "middle", letterSpacing: 6,
         });
-        this.eyebrowText = new Konva.Text( {
-            text: "",
-            x: 60,
-            y: 198,
-            width: this.stage.width() - 120,
-            fontSize: 14,
-            fill: "#a1a1aa",
-            align: "center",
-        });
-        this.scrambleText = new Konva.Text( {
-            text: "",
-            x: 60,
-            y: 235,
-            width: this.stage.width() - 120,
-            fontSize: 36,
-            fill: "#f4f4f5",
-            align: "center",
-        });
-        this.gameGroup.add(cardBox, this.eyebrowText, this.scrambleText);
+        y += cardHeight + 22;
 
-        // Label above the answer box and how many guesses are left
-        const answerLabel = new Konva.Text( {
-            text: "Your answer",
-            x: 60,
-            y: 325,
-            fontSize: 15,
-            fill: "#a1a1aa",
+        // The answer box shows what the player has typed so far. While it is focused it glows gold
+        // and shows a blinking cursor; click it to type, click anywhere else to stop
+        this.answerLabel = addKicker(this.gameGroup, "Your answer", { x: x0, y, color: colors.muted });
+        y += 24;
+        const inputHeight = 54;
+        const submitWidth = 170;
+        const inputWidth = leftWidth - submitWidth - 14;
+        this.inputGlow = new Konva.Rect({
+            x: x0 - 4, y: y - 4, width: inputWidth + 8, height: inputHeight + 8,
+            stroke: colors.highlight, strokeWidth: 4, opacity: 0.25, cornerRadius: theme.radius.button + 3, listening: false,
         });
-        this.attemptsText = new Konva.Text( {
-            text: "",
-            x: this.stage.width() - 260,
-            y: 325,
-            width: 200,
-            align: "right",
-            fontSize: 15,
-            fill: "#a1a1aa",
+        this.inputBox = new Konva.Rect({
+            x: x0, y, width: inputWidth, height: inputHeight,
+            fill: colors.background, stroke: colors.border, strokeWidth: 1, cornerRadius: theme.radius.button,
         });
-        this.gameGroup.add(answerLabel, this.attemptsText);
+        this.gameGroup.add(this.inputGlow, this.inputBox);
+        this.placeholderText = addText(this.gameGroup, "", {
+            x: x0 + 18, y, width: inputWidth - 36, height: inputHeight, size: 19, verticalAlign: "middle", italic: true, color: colors.faint,
+        });
+        this.inputText = addText(this.gameGroup, "", {
+            x: x0 + 18, y, width: inputWidth - 36, height: inputHeight, size: 20, verticalAlign: "middle", color: colors.text,
+        });
+        this.inputBox.on("mousedown touchstart", () => {
+            this.clickedInput = true;
+            this.setFocus(true);
+        });
+        this.inputBox.on("mouseenter", () => this.setCursor("text"));
+        this.inputBox.on("mouseleave", () => this.setCursor("default"));
 
-        // Box showing what the player has typed so far
-        const inputBox = new Konva.Rect( {
-            x: 60,
-            y: 355,
-            width: this.stage.width() - 120,
-            height: 56,
-            fill: "#27272a",
-            stroke: "#3f3f46",
-            cornerRadius: 10,
+        this.submitButton = addButton(this.gameGroup, "Submit", x0 + inputWidth + 14, y, submitWidth, () => this.submit(), {
+            height: inputHeight, arrow: true,
         });
-        this.inputText = new Konva.Text( {
-            text: "",
-            x: 80,
-            y: 355,
-            width: this.stage.width() - 160,
-            height: 56,
-            verticalAlign: "middle",
-            fontSize: 20,
-            fill: "#f4f4f5",
+        this.submitButton.on("mousedown touchstart", () => {
+            this.clickedInput = true;
         });
-        this.gameGroup.add(inputBox, this.inputText);
 
-        // Past guesses, one row per attempt
+        // A click anywhere else stops typing. Shapes hear the click before the stage does
+        this.stage.on("mousedown touchstart", () => {
+            if (!this.clickedInput) {
+                this.setFocus(false);
+            }
+            this.clickedInput = false;
+        });
+        y += inputHeight + 22;
+
+        // Past guesses, one row per attempt, with a tick or cross at the right end
+        const rowGap = 38;
         for (let idx = 0; idx < 3; idx++) {
-            const row = new Konva.Text( {
-                text: "",
-                x: 60,
-                y: 435 + idx * 36,
-                width: this.stage.width() - 120,
-                fontSize: 18,
-                fill: "#71717a",
-            });
-            this.historyTexts.push(row);
-            this.gameGroup.add(row);
+            this.historyTexts.push(addText(this.gameGroup, "", {
+                x: x0, y: y + idx * rowGap, width: leftWidth - 40, size: 17, color: colors.dim,
+            }));
+            const mark = new Konva.Group({ x: x0 + leftWidth - 18, y: y + idx * rowGap + 4 });
+            this.historyMarks.push(mark);
+            this.gameGroup.add(mark);
         }
-
-        const hintText = new Konva.Text( {
-            text: "Type your answer and press Enter to submit",
-            x: 60,
-            y: 555,
-            fontSize: 14,
-            fill: "#71717a",
+        addText(this.gameGroup, "Press Enter or Submit to check your answer", {
+            x: x0, y: y + rowGap * 3 + 6, size: 13, color: colors.faint, italic: true,
         });
-        this.gameGroup.add(hintText);
+
+        // Right column: the picture for this round, then a teaser about the story
+        const pictureWidth = Math.min(rightWidth * 0.82, 340);
+        const textRoom = 210;
+        const pictureHeight = Math.max(160, Math.min(pictureWidth * 1.18, height - top - textRoom - 40));
+        this.pictureBox = { x: rightX + (rightWidth - pictureWidth) / 2, y: top, width: pictureWidth, height: pictureHeight };
+        this.pictureGroup = new Konva.Group();
+        this.gameGroup.add(this.pictureGroup);
+        const blurbTop = top + pictureHeight + 26;
+        addKicker(this.gameGroup, "From the archives", { x: rightX, y: blurbTop, width: rightWidth, align: "center" });
+        addDivider(this.gameGroup, rightX + rightWidth / 2, blurbTop + 28, 50);
+        this.blurbText = addText(this.gameGroup, "", {
+            x: rightX, y: blurbTop + 44, width: rightWidth, size: 20, lineHeight: 1.5, align: "center", italic: true,
+        });
 
         // Konva has no text box, so the view listens for key presses itself
         this.keyHandler = (event: KeyboardEvent) => {
-            if (!this.inputEnabled || event.ctrlKey || event.metaKey || event.altKey) {
+            if (!this.inputEnabled || !this.focused || event.ctrlKey || event.metaKey || event.altKey) {
                 return;
             }
             if (event.key === "Enter") {
                 event.preventDefault();
-                if (this.currentGuess.trim() !== "") {
-                    const guess = this.currentGuess;
-                    this.currentGuess = "";
-                    this.refreshInput();
-                    onSubmit(guess);
-                }
+                this.submit();
             }
             else if (event.key === "Backspace") {
                 event.preventDefault();
                 this.currentGuess = this.currentGuess.slice(0, -1);
-                this.refreshInput();
+                this.showCaret();
             }
             else if (event.key.length === 1 && this.currentGuess.length < 40) {
                 event.preventDefault();
                 this.currentGuess += event.key;
-                this.refreshInput();
+                this.showCaret();
             }
         };
         window.addEventListener("keydown", this.keyHandler);
         this.layer.draw();
     }
 
-    // Change to next round: hint, scrambled title, progress, and score. Clears the typed answer
+    // Change to next round: hint, scrambled title, progress, score, picture, and teaser. Clears the typed answer
     updateRound(round: PoeRound, num: number, total: number, score: number): void {
         this.revealGroup.visible(false);
         this.gameGroup.visible(true);
-        this.roundText.text(`Round ${num} / ${total}`);
-        this.scoreText.text(`Score: ${score} / ${total}`);
-        this.eyebrowText.text(round.eyebrow);
+        this.roundBadge.set(`Round ${num} / ${total}`);
+        this.scoreBadge.set(`Score ${score} / ${total}`);
+        this.eyebrowText.text(round.eyebrow.toUpperCase());
         this.scrambleText.text(round.scramble);
+        this.blurbText.text(round.blurb ?? round.eyebrow);
+
+        this.pictureGroup.destroyChildren();
+        const { x, y, width, height } = this.pictureBox;
+        addImagePlaceholder(this.pictureGroup, x, y, width, height, {
+            shape: "oval", caption: `Round ${num} illustration`, src: round.image,
+        });
+
         this.currentGuess = "";
         this.inputEnabled = true;
-        this.refreshInput();
+        this.setFocus(true);   // Ready to type as soon as the round starts
     }
 
     // Update display of score
     updateScore(score: number, total: number): void {
-        this.scoreText.text(`Score: ${score} / ${total}`);
+        this.scoreBadge.set(`Score ${score} / ${total}`);
         this.layer.draw();
     }
 
-    // Shows the guesses so far and how many are left. The last guess gets a check if it was right
-    updateGuesses(guesses: string[], attemptsLeft: number, solved: boolean = false): void {
-        this.attemptsText.text(`${attemptsLeft} ${attemptsLeft === 1 ? "attempt" : "attempts"} remaining`);
+    // Shows the guesses so far, with a check on the last one if it was right.
+    // The three rows show how many tries are left, so the attempts count itself isn't drawn
+    updateGuesses(guesses: string[], _attemptsLeft: number, solved: boolean = false): void {
         for (let idx = 0; idx < this.historyTexts.length; idx++) {
             const num = String(idx + 1).padStart(2, "0");
             const guess = guesses[idx];
+            const mark = this.historyMarks[idx];
+            mark.destroyChildren();
             if (guess === undefined) {
-                this.historyTexts[idx].text(`${num}   Awaiting your guess`);
-                this.historyTexts[idx].fill("#71717a");
+                this.historyTexts[idx].text(`${num}     Awaiting your guess`);
+                this.historyTexts[idx].fill(colors.faint);
             }
             else {
                 const isRight = solved && idx === guesses.length - 1;
-                this.historyTexts[idx].text(`${num}   ${guess}   ${isRight ? "✓" : "×"}`);
-                this.historyTexts[idx].fill(isRight ? "#4ade80" : "#f87171");
+                this.historyTexts[idx].text(`${num}     ${guess}`);
+                this.historyTexts[idx].fill(isRight ? colors.correctText : colors.wrongText);
+                this.drawMark(mark, isRight);
             }
         }
+
         this.layer.draw();
     }
 
     // Fixes cursor and key listener per round
     destroy(): void {
+        this.stopCaret();
         window.removeEventListener("keydown", this.keyHandler);
         document.body.style.cursor = "default";
         this.stage.destroy();
@@ -247,136 +261,139 @@ export class PoeView {
 
     // Card over the game telling the player the answer and the story behind it
     showReveal(correct: boolean, round: PoeRound, buttonLabel: string, onAction: () => void): void {
+        this.setFocus(false);
         this.inputEnabled = false;
         this.revealGroup.destroyChildren();
         this.revealGroup.visible(true);
-        const width = this.stage.width();
-        const height = this.stage.height();
-        const cardWidth = Math.min(720, width - 120);
+        const width = this.size.width;
+        const height = this.size.height;
+        const cardWidth = Math.min(700, width - 80);
         const cardX = (width - cardWidth) / 2;
-        const cardY = height * 0.1;
+        const inner = cardWidth - 120;
+        const cx = width / 2;
 
-        // Dim the game behind the card
-        const shade = new Konva.Rect( {
-            x: 0,
-            y: 0,
-            width,
-            height,
-            fill: "rgba(0, 0, 0, 0.75)",
-        });
+        addShade(this.revealGroup, width, height);
+        const card = new Konva.Group({ x: 0, y: 0 });
+        let y = 36;
 
-        const card = new Konva.Rect( {
-            x: cardX,
-            y: cardY,
-            width: cardWidth,
-            height: 480,
-            fill: "#27272a",
-            cornerRadius: 12,
-        });
+        // Seal with a check or a cross
+        const seal = new Konva.Group({ x: cx, y: y + 30 });
+        seal.add(new Konva.Circle({ radius: 30, stroke: correct ? colors.correctText : colors.wrongText, strokeWidth: 2 }));
+        seal.add(new Konva.Circle({ radius: 24, stroke: correct ? colors.correctText : colors.wrongText, strokeWidth: 1, opacity: 0.5 }));
+        seal.add(correct
+            ? new Konva.Line({ points: [-11, 0, -3, 9, 12, -9], stroke: colors.correctText, strokeWidth: 3, lineCap: "round", lineJoin: "round" })
+            : new Konva.Line({ points: [-9, -9, 9, 9, 0, 0, 9, -9, -9, 9], stroke: colors.wrongText, strokeWidth: 3, lineCap: "round" }));
+        card.add(seal);
+        y += 78;
 
-        const iconText = new Konva.Text( {
-            x: cardX,
-            y: cardY + 24,
-            width: cardWidth,
-            text: correct ? "✓" : "×",
-            fontSize: 44,
-            fill: correct ? "#4ade80" : "#f87171",
-            align: "center",
+        const kicker = addKicker(card, correct ? "A mystery solved" : "The answer revealed", { x: cardX, y, width: cardWidth, align: "center" });
+        y += kicker.height() + 12;
+        const title = addText(card, correct ? "Well read." : "Not this time.", {
+            x: cardX, y, width: cardWidth, size: 34, font: "heading", color: colors.text, align: "center",
         });
+        y += title.height() + 14;
+        addDivider(card, cx, y + 4);
+        y += 24;
+        const answer = addText(card, `The answer is “${round.displayAnswer}.”`, {
+            x: cardX, y, width: cardWidth, size: 21, color: colors.highlight, align: "center",
+        });
+        y += answer.height() + 14;
+        const explanation = addText(card, round.explanation, {
+            x: cardX + 60, y, width: inner, size: 17, lineHeight: 1.55, align: "center",
+        });
+        y += explanation.height() + 30;
+        const buttonWidth = 300;
+        addButton(card, buttonLabel, cx - buttonWidth / 2, y, buttonWidth, onAction, { arrow: true });
+        y += theme.button.size.height + 36;
 
-        const kickerText = new Konva.Text( {
-            x: cardX,
-            y: cardY + 90,
-            width: cardWidth,
-            text: correct ? "A mystery solved" : "The answer revealed",
-            fontSize: 14,
-            fill: "#a1a1aa",
-            align: "center",
-        });
-
-        const titleText = new Konva.Text( {
-            x: cardX,
-            y: cardY + 115,
-            width: cardWidth,
-            text: correct ? "Well read." : "Not this time.",
-            fontSize: 30,
-            fill: "#ffffff",
-            align: "center",
-        });
-
-        const answerText = new Konva.Text( {
-            x: cardX,
-            y: cardY + 165,
-            width: cardWidth,
-            text: `The answer is “${round.displayAnswer}.”`,
-            fontSize: 20,
-            fill: "#e2e8f0",
-            align: "center",
-        });
-
-        const explanationText = new Konva.Text( {
-            x: cardX + 40,
-            y: cardY + 215,
-            width: cardWidth - 80,
-            text: round.explanation,
-            fontSize: 18,
-            lineHeight: 1.5,
-            fill: "#d4d4d8",
-            align: "center",
-        });
-
-        const buttonWidth = 260;
-        const buttonHeight = 52;
-        const buttonGroup = new Konva.Group( {
-            x: (width - buttonWidth) / 2,
-            y: cardY + 400,
-        });
-
-        const buttonBackground = new Konva.Rect( {
-            width: buttonWidth,
-            height: buttonHeight,
-            fill: "#3b82f6",
-        });
-
-        const buttonText = new Konva.Text( {
-            width: buttonWidth,
-            height: buttonHeight,
-            text: buttonLabel,
-            fontSize: 18,
-            fill: "#ffffff",
-            align: "center",
-            verticalAlign: "middle",
-        });
-
-        buttonGroup.add(buttonBackground, buttonText);
-
-        buttonGroup.on("mouseenter", () => {
-            this.stage.container().style.cursor = "pointer";
-            buttonBackground.fill("#2563eb");
-        });
-        buttonGroup.on("mouseleave", () => {
-            this.stage.container().style.cursor = "default";
-            buttonBackground.fill("#3b82f6");
-        });
-        buttonGroup.on("click tap", () => {
-            this.stage.container().style.cursor = "default";
-            onAction();
-        });
-
-        this.revealGroup.add(shade, card, iconText, kickerText, titleText, answerText, explanationText, buttonGroup);
+        // Center the finished card vertically, with the panel behind everything
+        const cardHeight = y;
+        const cardY = Math.max(20, (height - cardHeight) / 2);
+        card.y(cardY);
+        const panelLayer = new Konva.Group();
+        addPanel(panelLayer, cardX, cardY, cardWidth, cardHeight);
+        this.revealGroup.add(panelLayer, card);
         this.layer.draw();
     }
 
-    // Redraws the typed answer, or the placeholder if nothing is typed yet
+    private makeBadge(anchorX: number, y: number, align: "left" | "right"): Badge {
+        const box = new Konva.Rect({ y, height: 34, stroke: colors.border, strokeWidth: 1, cornerRadius: theme.radius.button });
+        const label = addText(this.gameGroup, "", { y: y + 9, size: 13, color: colors.body, letterSpacing: 2, caps: true });
+        this.gameGroup.add(box);
+        return {
+            set: (text: string) => {
+                label.text(text.toUpperCase());
+                const boxWidth = label.width() + 32;
+                const boxX = align === "left" ? anchorX : anchorX - boxWidth;
+                box.x(boxX);
+                box.width(boxWidth);
+                label.x(boxX + 16);
+                label.y(y + (34 - label.height()) / 2);
+            },
+        };
+    }
+
+    // Small tick or cross at the end of a guess row
+    private drawMark(mark: Konva.Group, right: boolean): void {
+        mark.add(right
+            ? new Konva.Line({ points: [0, 8, 6, 14, 16, 2], stroke: colors.correctText, strokeWidth: 2.5, lineCap: "round", lineJoin: "round" })
+            : new Konva.Line({ points: [2, 2, 14, 14, 8, 8, 14, 2, 2, 14], stroke: colors.wrongText, strokeWidth: 2.5, lineCap: "round" }));
+    }
+
+    // Sends the typed answer (Enter or the Submit button). Blank answers do nothing
+    private submit(): void {
+        if (!this.inputEnabled || this.currentGuess.trim() === "") {
+            return;
+        }
+        const guess = this.currentGuess;
+        this.currentGuess = "";
+        this.showCaret();
+        this.onSubmit(guess);
+    }
+
+    // Focused: gold border and glow, gold label, blinking cursor. Unfocused: plain box, "Click here" prompt
+    private setFocus(focused: boolean): void {
+        this.focused = focused && this.inputEnabled;
+        this.inputBox.stroke(this.focused ? colors.highlight : colors.border);
+        this.inputBox.strokeWidth(this.focused ? 2 : 1);
+        this.inputGlow.visible(this.focused);
+        this.answerLabel.fill(this.focused ? colors.highlight : colors.muted);
+        this.stopCaret();
+        if (this.focused) {
+            this.caretTimer = setInterval(() => {
+                this.caretOn = !this.caretOn;
+                this.refreshInput();
+            }, 530);
+        }
+        this.showCaret();
+    }
+
+    // Keeps the cursor visible right after typing, so it doesn't blink out mid-word
+    private showCaret(): void {
+        this.caretOn = true;
+        this.refreshInput();
+    }
+
+    private stopCaret(): void {
+        if (this.caretTimer !== null) {
+            clearInterval(this.caretTimer);
+            this.caretTimer = null;
+        }
+    }
+
+    private setCursor(cursor: string): void {
+        this.stage.container().style.cursor = cursor;
+    }
+
+    // Redraws the typed answer with the cursor, the prompt in an empty box, and whether Submit is ready
     private refreshInput(): void {
-        if (this.currentGuess === "") {
-            this.inputText.text("Type the title here...");
-            this.inputText.fill("#71717a");
-        }
-        else {
-            this.inputText.text(`${this.currentGuess}|`);
-            this.inputText.fill("#f4f4f5");
-        }
+        const caret = this.focused && this.caretOn ? "|" : "";
+        const empty = this.currentGuess === "";
+        this.inputText.text(`${this.currentGuess}${caret}`);
+        this.placeholderText.text(empty ? (this.focused ? "Start typing the title…" : "Click here to type your answer") : "");
+        // In a focused, empty box the prompt sits just after the cursor
+        this.placeholderText.x(this.inputText.x() + (empty && this.focused ? 12 : 0));
+        this.submitButton.opacity(empty ? 0.45 : 1);
         this.layer.draw();
     }
 }

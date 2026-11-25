@@ -27,6 +27,8 @@ vi.mock("../trivia/TriviaView", () => ({ TriviaView: vi.fn().mockImplementation(
 }) }));
 
 beforeEach(() => {
+  // Each game waits for its custom fonts before starting; with no font API the wait ends at once
+  Object.defineProperty(document, "fonts", { value: undefined, configurable: true });
   vi.useFakeTimers();
   vi.resetModules();
   vi.clearAllMocks();
@@ -50,7 +52,8 @@ function exit() { fireEvent.click(screen.getByRole("button", { name: "Return to 
 describe("native menu control in canvas applications", () => {
   it("preserves Poe attempts/score on Cancel and remains wired through real trivia progression", async () => {
     const { confirm, navigate } = browser();
-    await import("../poe/main");
+    const { ready } = await import("../poe/main");
+    await ready;
     const button = screen.getByRole("button", { name: "Return to Main Menu" });
     expect(document.getElementById("container")!.contains(button)).toBe(false);
     views.submitPoe!("wrong answer");
@@ -81,9 +84,10 @@ describe("native menu control in canvas applications", () => {
     expect(navigate).toHaveBeenCalledExactlyOnceWith(menuUrl);
   });
 
-  it("does not reset Bashō's countdown or interval phase and survives the transition to trivia", async () => {
+  it("does not reset Basho's countdown or interval phase and survives the transition to trivia", async () => {
     const { confirm, navigate } = browser();
-    await import("../basho/main");
+    const { ready } = await import("../basho/main");
+    await ready;
     const button = screen.getByRole("button", { name: "Return to Main Menu" });
     views.basho.showMessage.mock.lastCall![1](); // Begin rounds.
     vi.advanceTimersByTime(1150);

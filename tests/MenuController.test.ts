@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MenuController } from "../menu/MenuController";
-import { MenuModel, type MenuItem } from "../menu/MenuModel";
-import type { MenuView } from "../menu/MenuView";
+import { MenuModel, type JournalPage, type MenuItem, type WorksheetRow } from "../menu/MenuModel";
+import type { JournalHandlers, MenuView } from "../menu/MenuView";
 import { destinations } from "../menu/destinations";
 import { timeTravelIntroCards } from "../intro/introCards";
 
@@ -9,21 +9,27 @@ import { timeTravelIntroCards } from "../intro/introCards";
 vi.mock("../../menu/MenuView", () => ({ MenuView: class {} }));
 
 type OnSelect = (item: MenuItem) => void;
-type RenderArgs = [string, MenuItem[], OnSelect, string | undefined];
+type RenderArgs = [string, MenuItem[], OnSelect, WorksheetRow[] | undefined];
+type JournalArgs = [string, JournalPage, JournalHandlers];
 
 let fakeLocation: { hash: string; pathname: string; href: string };
 let replaceState: ReturnType<typeof vi.fn>;
-let render: ReturnType<typeof vi.fn>; 
+let render: ReturnType<typeof vi.fn>;
+let renderJournal: ReturnType<typeof vi.fn>;
 let renderCards: ReturnType<typeof vi.fn>;
 
-// Builds a controller with a fake view and fake browser globals, then starts it
-function setup(hash: string = "", introFinishesAtOnce: boolean = true): void {
+// Builds a controller with a fake view and fake browser globals, then starts it.
+// `met` is the list of finished authors already saved in localStorage.
+// With introFinishesAtOnce, the fake intro "plays" instantly so author clicks navigate straight away.
+function setup(hash: string = "", met: string[] = [], introFinishesAtOnce: boolean = true): void {
     fakeLocation = { hash, pathname: "/", href: "" };
     replaceState = vi.fn();
     render = vi.fn();
-
+    renderJournal = vi.fn();
     renderCards = vi.fn((_cards: unknown, onDone: () => void) => {
-        if (introFinishesAtOnce) onDone();
+        if (introFinishesAtOnce) {
+            onDone();
+        }
     });
 
     const store = new Map<string, string>();
@@ -33,12 +39,18 @@ function setup(hash: string = "", introFinishesAtOnce: boolean = true): void {
         removeItem: (key: string) => { store.delete(key); },
         clear: () => store.clear(),
     });
+    localStorage.setItem("authorsMet", JSON.stringify(met));
     vi.stubGlobal("location", fakeLocation);
     vi.stubGlobal("window", { location: fakeLocation });
     vi.stubGlobal("history", { replaceState });
 
-    const controller = new MenuController(new MenuModel(), { render, renderCards } as unknown as MenuView);
+    const controller = new MenuController(new MenuModel(), { render, renderJournal, renderCards } as unknown as MenuView);
     controller.start();
+}
+
+// Arguments of the most recent view.renderJournal(...) call
+function lastJournal(): JournalArgs {
+    return renderJournal.mock.calls[renderJournal.mock.calls.length - 1] as JournalArgs;
 }
 
 // Arguments of the most recent view.render(...) call
@@ -58,16 +70,40 @@ function click(label: string): void {
 
 afterEach(() => {
     vi.unstubAllGlobals();
+    localStorage.clear();
 });
 
 describe("MenuController", () => {
     describe("start", () => {
         it("shows the main menu by default", () => {
             setup();
-            const [title, items, , placeholder] = lastRender();
-            expect(title).toBe("Main Menu");
-            expect(items.map((item) => item.label)).toEqual(["Play", "Minigames", "Journal"]);
-            expect(placeholder).toBeUndefined();
+            const [title, items] = lastRender();
+            expect(title).toBe("Out of Print");
+            expect(items.map((item) => item.label)).toEqual(["Play", "Journal"]);
+        });
+
+        it("does not show the worksheet on the main menu", () => {
+            setup("", ["poe"]);
+            expect(lastRender()[3]).toBeUndefined();
+        });
+
+        it("shows a blank worksheet on the story picker when no author is finished", () => {
+            setup("#play");
+            const worksheet = lastRender()[3]!;
+            expect(worksheet).toHaveLength(3);
+            expect(worksheet.every((row) => row.text === undefined)).toBe(true);
+        });
+
+        it("fills in the worksheet for finished authors only", () => {
+            setup("#play", ["shakespeare"]);
+            const worksheet = lastRender()[3]!;
+            expect(worksheet.filter((row) => row.text !== undefined).map((row) => row.author)).toEqual(["shakespeare"]);
+        });
+
+        it("shows the worksheet when the story picker is opened from the main menu", () => {
+            setup("", ["basho"]);
+            click("Play");
+            expect(lastRender()[3]!.find((row) => row.author === "basho")!.text).toBeDefined();
         });
 
         it("renders exactly once on start", () => {
@@ -84,7 +120,7 @@ describe("MenuController", () => {
 
         it("falls back to the main menu for an unknown hash", () => {
             setup("#somethingelse");
-            expect(lastRender()[0]).toBe("Main Menu");
+            expect(lastRender()[0]).toBe("Out of Print");
         });
     });
 
@@ -106,38 +142,63 @@ describe("MenuController", () => {
             setup();
             click("Play");
             click("Back");
-            expect(lastRender()[0]).toBe("Main Menu");
+            expect(lastRender()[0]).toBe("Out of Print");
             expect(replaceState).toHaveBeenLastCalledWith(null, "", "/");
         });
 
-        it("shows the journal with a Coming soon placeholder", () => {
+        it("opens the journal on a locked first page when nothing is finished", () => {
             setup();
             click("Journal");
-            const [title, items, , placeholder] = lastRender();
+            expect(renderJournal).toHaveBeenCalledTimes(1);
+            const [title, page] = lastJournal();
             expect(title).toBe("Journal");
-            expect(placeholder).toBe("Coming soon");
-            expect(items.map((item) => item.label)).toEqual(["Back"]);
+            expect(page).toMatchObject({ pageNumber: 1, unlocked: false, facts: [], hasPrev: false, hasNext: true });
         });
 
-        it("returns from the journal to the main menu without the placeholder", () => {
+        it("opens the journal on the first finished author's notes", () => {
+            setup("", ["shakespeare"]);
+            click("Journal");
+            const [, page] = lastJournal();
+            expect(page.author).toBe("shakespeare");
+            expect(page.unlocked).toBe(true);
+            expect(page.facts.length).toBeGreaterThan(0);
+        });
+
+        it("turns journal pages with the arrows and stops at the ends", () => {
+            setup("", ["basho"]);
+            click("Journal");
+            expect(lastJournal()[1].author).toBe("basho");
+
+            lastJournal()[2].onPrev();                       // already on the first page
+            expect(renderJournal).toHaveBeenCalledTimes(1);
+
+            lastJournal()[2].onNext();
+            expect(lastJournal()[1]).toMatchObject({ author: "poe", unlocked: false });
+            lastJournal()[2].onNext();
+            expect(lastJournal()[1]).toMatchObject({ author: "shakespeare", hasNext: false });
+            lastJournal()[2].onNext();                       // already on the last page
+            expect(renderJournal).toHaveBeenCalledTimes(3);
+        });
+
+        it("returns from the journal to the main menu", () => {
             setup();
             click("Journal");
-            click("Back");
-            const [title, , , placeholder] = lastRender();
-            expect(title).toBe("Main Menu");
-            expect(placeholder).toBeUndefined();
+            lastJournal()[2].onBack();
+            expect(lastRender()[0]).toBe("Out of Print");
+            expect(replaceState).toHaveBeenLastCalledWith(null, "", "/");
         });
     });
 
     describe("leaving the menu for a game", () => {
         it("sends Minigames to the iambic pentameter game", () => {
             setup();
+            click("Play");
             click("Minigames");
             expect(fakeLocation.href).toBe(destinations.iambic);
         });
 
         it.each([
-            ["Matsuo Bashō", destinations.basho],
+            ["Matsuo Basho", destinations.basho],
             ["Edgar Allan Poe", destinations.poe],
             ["Shakespeare", destinations.shakespeare],
         ])("sends %s to its game", (label, url) => {
@@ -162,12 +223,15 @@ describe("MenuController", () => {
             click("Play");
             click("Back");
             click("Journal");
+            lastJournal()[2].onNext();
+            lastJournal()[2].onBack();
             expect(fakeLocation.href).toBe("");
         });
+
         it("plays the intro before the first author and navigates only when it finishes", () => {
-   	    setup("", false); // intro stays open until we finish it
-   	    click("Play");
-    	    click("Shakespeare");
+            setup("", [], false); // intro stays open until we finish it
+            click("Play");
+            click("Shakespeare");
             expect(renderCards).toHaveBeenCalledTimes(1);
             expect(renderCards.mock.calls[0][0]).toBe(timeTravelIntroCards);
             expect(fakeLocation.href).toBe("");
@@ -180,7 +244,7 @@ describe("MenuController", () => {
         it("skips the intro for later authors", () => {
             setup();
             click("Play");
-            click("Matsuo Bashō");
+            click("Matsuo Basho");
             click("Edgar Allan Poe");
             expect(renderCards).toHaveBeenCalledTimes(1);
             expect(fakeLocation.href).toBe(destinations.poe);
@@ -188,13 +252,13 @@ describe("MenuController", () => {
 
         it("never plays the intro for Minigames, and doesn't use it up", () => {
             setup();
+            click("Play");
             click("Minigames");
             expect(renderCards).not.toHaveBeenCalled();
             expect(fakeLocation.href).toBe(destinations.iambic);
 
-            click("Play");
             click("Shakespeare");
             expect(renderCards).toHaveBeenCalledTimes(1);
         });
-     });
+    });
 });

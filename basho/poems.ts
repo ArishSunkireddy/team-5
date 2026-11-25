@@ -17,9 +17,11 @@ export interface BashoScreen {
     kicker: string;
     title: string;
     body: string;
-    extra?: string; // Optional text under the body, used for Bashō's finished haiku
+    extra?: string; // Optional text under the body, used for Basho's finished haiku
     buttonLabel: string;
     hint: string;
+    showSyllables?: boolean; // Draw the 5-7-5 strip on this card (the briefing)
+    somber?: boolean;        // Dark seal instead of red (the lose card)
 }
 
 export type BashoScreenID = "briefing" | "won" | "lost" | "farewell";
@@ -90,36 +92,38 @@ export const bashoPoems: BashoPoem[] = [
     },
 ];
 
-// Story cards: the briefing before the rounds, the win and lose cards after them, and Bashō's farewell
+// Story cards: the briefing before the rounds, the win and lose cards after them, and Basho's farewell
 export const BashoScreens: Record<BashoScreenID, BashoScreen> = {
     briefing: {
         kicker: "A literary trial",
-        title: "Help Bashō find his patron",
-        body: "Genroku Japan is alive with art and ambition. Compose three haiku in the sacred 5–7–5 form before time slips away, and help Matsuo Bashō earn the support of a merchant patron.",
+        title: "Help Basho find his patron",
+        body: "Genroku Japan is alive with art and ambition. Compose three haiku in the sacred 5–7–5 form before time slips away, and help Matsuo Basho earn the support of a merchant patron.",
         buttonLabel: "Begin the journey",
         hint: "Three lives · Nine lines · Time quickens each round",
+        showSyllables: true,
     },
     won: {
         kicker: "A heart moved by verse",
         title: "The road opens before you",
-        body: "Your verses have touched the merchant's heart. With his patronage secured, Bashō can now travel the roads of Japan and turn each passing season into poetry.",
-        extra: "An old silent pond\nA frog jumps into the pond—\nSplash! Silence again.\n— Matsuo Bashō",
+        body: "Your verses have touched the merchant's heart. With his patronage secured, Basho can now travel the roads of Japan and turn each passing season into poetry.",
+        extra: "An old silent pond\nA frog jumps into the pond—\nSplash! Silence again.\n— Matsuo Basho",
         buttonLabel: "Continue down the road",
-        hint: "A final word from Bashō awaits",
+        hint: "A final word from Basho awaits",
     },
     lost: {
         kicker: "A grave offense",
         title: "Exiled for crimes against the arts",
         body: "Three broken verses have exhausted the merchant's patience. You are sent to a faraway island, where only the gulls remain to hear your unfinished poems.",
         buttonLabel: "Walk the path again",
+        somber: true,
         hint: "Three lives · Nine lines · Time quickens each round",
     },
     farewell: {
         kicker: "At the parting road",
         title: "Until our paths cross again",
         body: "“You have learned to hear the world between words. Carry that quiet attention with you, traveler.”",
-        extra: "— Matsuo Bashō",
-        buttonLabel: "Bid Bashō farewell",
+        extra: "— Matsuo Basho",
+        buttonLabel: "Bid Basho farewell",
         hint: "",
     },
 };

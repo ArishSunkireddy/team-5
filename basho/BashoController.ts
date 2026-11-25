@@ -3,7 +3,7 @@ import { BashoModel } from "./BashoModel";
 import { BashoPoem, BashoScreen, BashoScreenID } from "./poems";
 
 export interface BashoControl {
-    // Called after Bashō's farewell so the game can move on to the trivia
+    // Called after Basho's farewell so the game can move on to the trivia
     onComplete: () => void;
 }
 
