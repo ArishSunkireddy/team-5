@@ -22,7 +22,7 @@ export const targets: SmokeTarget[] = [
     port: 4175,
     mount: "#container",
     canvas: true,
-    title: /Iambic Pentameter/,
+    title: /Poetry Builder/,
   },
   {
     workspace: "shakespeare-mvc",
