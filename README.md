@@ -1,6 +1,6 @@
-# team-5
+# Out of Print - Team 5
 
-CSE 110 Team 5
+A short literary game to help students learn about famous authors throughout time.
 
 ## Setup
 
