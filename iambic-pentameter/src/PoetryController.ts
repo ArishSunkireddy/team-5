@@ -1,6 +1,6 @@
-import { PoetryModel } from './PoetryModel';
-import { PoetryView } from './PoetryView';
-import type { GameAction } from './game/state';
+import { PoetryModel } from "./PoetryModel";
+import { PoetryView } from "./PoetryView";
+import type { GameAction } from "./game/state";
 
 export interface PoetryControl {
   // A worksheet launch supplies a return action. A standalone game can replay.
@@ -13,33 +13,39 @@ export class PoetryController {
   private worksheetReturn: (() => void) | void = undefined;
   private destroyed = false;
 
-  constructor(private control: PoetryControl, containerID = 'container') {
-    this.view = new PoetryView(action => this.handle(action), containerID);
+  constructor(
+    private control: PoetryControl,
+    containerID = "container",
+  ) {
+    this.view = new PoetryView((action) => this.handle(action), containerID);
   }
 
   start(): void {
     if (!this.destroyed) this.render();
   }
 
-  private handle(action: GameAction | { type: 'finish' }): void {
+  private handle(action: GameAction | { type: "finish" }): void {
     if (this.destroyed) return;
-    if (action.type === 'finish') {
-      if (this.model.getRoundInfo().screen !== 'final') return;
+    if (action.type === "finish") {
+      if (this.model.getRoundInfo().screen !== "final") return;
       if (this.worksheetReturn) {
         this.worksheetReturn();
         return;
       }
-      action = { type: 'restart' };
+      action = { type: "restart" };
     }
     if (!this.model.apply(action)) return;
     const info = this.model.getRoundInfo();
-    if (info.screen === 'final') this.worksheetReturn = this.control.onComplete(info.score);
+    if (info.screen === "final") this.worksheetReturn = this.control.onComplete(info.score);
     else this.worksheetReturn = undefined;
     this.render();
   }
 
   private render(): void {
-    this.view.render(this.model.getRoundInfo(), this.worksheetReturn ? 'Return to Worksheet' : 'Play Again');
+    this.view.render(
+      this.model.getRoundInfo(),
+      this.worksheetReturn ? "Return to Worksheet" : "Play Again",
+    );
   }
 
   destroy(): void {

@@ -1,6 +1,6 @@
-import { poemChallenges } from './data/poemChallenges';
-import { gameReducer, initialState, isStrongFinish, type GameAction } from './game/state';
-import { isComplete } from './game/validation';
+import { poemChallenges } from "./data/poemChallenges";
+import { gameReducer, initialState, isStrongFinish, type GameAction } from "./game/state";
+import { isComplete } from "./game/validation";
 
 export class PoetryModel {
   private state = initialState();
@@ -17,7 +17,12 @@ export class PoetryModel {
     const challenge = poemChallenges[roundIndex];
     const score = awardedRounds.length;
     return {
-      screen, roundIndex, result, slots, challenge, score,
+      screen,
+      roundIndex,
+      result,
+      slots,
+      challenge,
+      score,
       totalRounds: poemChallenges.length,
       canCheck: isComplete(slots, challenge),
       strongFinish: isStrongFinish(score),
@@ -25,4 +30,4 @@ export class PoetryModel {
   }
 }
 
-export type PoetryRoundInfo = ReturnType<PoetryModel['getRoundInfo']>;
+export type PoetryRoundInfo = ReturnType<PoetryModel["getRoundInfo"]>;
